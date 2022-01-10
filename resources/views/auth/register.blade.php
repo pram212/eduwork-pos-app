@@ -17,9 +17,8 @@
 <body class="hold-transition register-page">
     <div class="register-box">
         <div class="card card-outline card-primary">
-            <div class="card-header text-center">
-                <h1>Aplikasi POS</h1>
-                <p>(Point of Sale)</p>
+            <div class="card-header h2 text-center">
+               Aplikasi Point Of Sales
             </div>
             <div class="card-body">
                 <p class="login-box-msg">Pendaftaran Akun Baru</p>

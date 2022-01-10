@@ -18,11 +18,11 @@
     <div class="login-box">
     <!-- /.login-logo -->
     <div class="card card-outline card-primary">
-        <div class="card-header text-center">
+        <div class="card-header h2 text-center">
             Aplikasi Point Of Sales
         </div>
         <div class="card-body">
-            <p class="login-box-msg">Login untuk masuk sistem!</p>
+            <p class="login-box-msg">Silahkan Login</p>
 
             <form action="{{ route('login') }}" method="POST">
                 @csrf
