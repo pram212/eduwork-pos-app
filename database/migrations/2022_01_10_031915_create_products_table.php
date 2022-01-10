@@ -19,7 +19,7 @@ class CreateProductsTable extends Migration
             $table->char('name');
             $table->bigInteger('price');
             $table->bigInteger('stock')->default(0);
-            $table->text('desription')->nullable();
+            $table->text('description')->nullable();
             $table->foreignId('category_id')->nullable()->constrained()->nullOnDelete();
             $table->foreignId('warehouse_id')->nullable()->constrained()->nullOnDelete();
             $table->timestamps();

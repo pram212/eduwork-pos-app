@@ -3,8 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
-use App\Http\Requests\StoreProductRequest;
-use App\Http\Requests\UpdateProductRequest;
+use App\Models\Category;
+use App\Models\Warehouse;
+use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
@@ -15,17 +16,9 @@ class ProductController extends Controller
      */
     public function index()
     {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+        $categories = Category::all();
+        $warehouses = Warehouse::all();
+        return view('products', compact('categories', 'warehouses'));
     }
 
     /**
@@ -34,31 +27,19 @@ class ProductController extends Controller
      * @param  \App\Http\Requests\StoreProductRequest  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StoreProductRequest $request)
+    public function store(Request $request)
     {
-        //
-    }
+        $request->validate([
+            'code' => 'required|numeric|unique:products',
+            'name' => 'required',
+            'price' => 'required',
+        ]);
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Product  $product
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Product $product)
-    {
-        //
-    }
+        $product = new Product();
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Product  $product
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Product $product)
-    {
-        //
+        $product->create($request->all());
+
+        return response()->json($product);
     }
 
     /**
@@ -68,9 +49,17 @@ class ProductController extends Controller
      * @param  \App\Models\Product  $product
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateProductRequest $request, Product $product)
+    public function update(Request $request, Product $product)
     {
-        //
+        $request->validate([
+            'code' => 'required|numeric',
+            'name' => 'required',
+            'price' => 'required',
+        ]);
+
+        $product->update($request->all());
+
+        return response()->json($product);
     }
 
     /**
@@ -81,6 +70,8 @@ class ProductController extends Controller
      */
     public function destroy(Product $product)
     {
-        //
+        $product->delete();
+
+        return response()->json($product);
     }
 }

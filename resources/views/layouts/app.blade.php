@@ -24,7 +24,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
 </head>
 <body class="hold-transition sidebar-mini dark-mode">
-    <div class="wrapper" id="app">
+    <div class="wrapper">
         <!-- Preloader -->
         <div class="preloader flex-column justify-content-center align-items-center">
             <img class="animation__wobble" src="{{asset('adminLTE/dist/img/AdminLTELogo.png')}}" alt="AdminLTELogo" height="60" width="60">
@@ -62,7 +62,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
             <!-- /.content-header -->
 
             <!-- Main content -->
-            <div class="content">
+            <div class="content" id="app">
                 <div class="container-fluid">
                     <div class="row">
                         <div class="col-lg-12">
@@ -106,6 +106,10 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <script src="{{asset('adminLTE/plugins/bootstrap/js/bootstrap.bundle.min.js')}}"></script>
     <!-- AdminLTE App -->
     <script src="{{asset('adminLTE/dist/js/adminlte.min.js')}}"></script>
+    <!-- Vue CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+    <!-- axios CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <!-- Start Build Your Scripts -->
     @stack('script')
 

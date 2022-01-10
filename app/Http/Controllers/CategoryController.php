@@ -3,8 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
-use App\Http\Requests\StoreCategoryRequest;
-use App\Http\Requests\UpdateCategoryRequest;
+use Illuminate\Http\Request;
 
 class CategoryController extends Controller
 {
@@ -15,17 +14,7 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+        return view('categories');
     }
 
     /**
@@ -34,31 +23,17 @@ class CategoryController extends Controller
      * @param  \App\Http\Requests\StoreCategoryRequest  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StoreCategoryRequest $request)
+    public function store(Request $request)
     {
-        //
-    }
+        $request->validate([
+            'name' => 'required|string',
+        ]);
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Category  $category
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Category $category)
-    {
-        //
-    }
+        $category = new Category();
+        $category->name = $request->name;
+        $category->save();
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Category  $category
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Category $category)
-    {
-        //
+        return response()->json($category);
     }
 
     /**
@@ -68,9 +43,12 @@ class CategoryController extends Controller
      * @param  \App\Models\Category  $category
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateCategoryRequest $request, Category $category)
+    public function update(Request $request, Category $category)
     {
-        //
+        $category->update([
+            'name' => $request->name,
+        ]);
+        return response()->json($category);
     }
 
     /**
@@ -81,6 +59,7 @@ class CategoryController extends Controller
      */
     public function destroy(Category $category)
     {
-        //
+        $category->delete();
+        return response()->json($category);
     }
 }

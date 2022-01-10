@@ -3,8 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Warehouse;
-use App\Http\Requests\StoreWarehouseRequest;
-use App\Http\Requests\UpdateWarehouseRequest;
+use Illuminate\Http\Request;
 
 class WarehouseController extends Controller
 {
@@ -15,17 +14,7 @@ class WarehouseController extends Controller
      */
     public function index()
     {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+        return view('warehouses');
     }
 
     /**
@@ -34,31 +23,16 @@ class WarehouseController extends Controller
      * @param  \App\Http\Requests\StoreWarehouseRequest  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StoreWarehouseRequest $request)
+    public function store(Request $request)
     {
-        //
-    }
+        $request->validate([
+            'name' => 'required|string'
+        ]);
+        $warehouse = new Warehouse();
+        $warehouse->name = $request->name;
+        $warehouse->save();
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Warehouse  $warehouse
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Warehouse $warehouse)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Warehouse  $warehouse
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Warehouse $warehouse)
-    {
-        //
+        return response()->json($warehouse);
     }
 
     /**
@@ -68,9 +42,17 @@ class WarehouseController extends Controller
      * @param  \App\Models\Warehouse  $warehouse
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateWarehouseRequest $request, Warehouse $warehouse)
+    public function update(Request $request, Warehouse $warehouse)
     {
-        //
+        $request->validate([
+            'name' => 'required|string'
+        ]);
+
+        $warehouse->update([
+            'name' => $request->name,
+        ]);
+
+        return response()->json($warehouse);
     }
 
     /**
@@ -81,6 +63,7 @@ class WarehouseController extends Controller
      */
     public function destroy(Warehouse $warehouse)
     {
-        //
+        $warehouse->delete();
+        return response()->json($warehouse);
     }
 }
