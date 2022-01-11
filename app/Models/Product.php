@@ -9,7 +9,7 @@ class Product extends Model
 {
     use HasFactory;
 
-    protected $guarded = [];
+    protected $guarded = ['id', 'created_at', 'updated_at'];
 
     public function category()
     {
@@ -19,5 +19,10 @@ class Product extends Model
     public function warehouse()
     {
         return $this->belongsTo(Warehouse::class);
+    }
+
+    public function transactions()
+    {
+        return $this->belongsToMany(Transaction::class)->withPivot('quantity');
     }
 }
