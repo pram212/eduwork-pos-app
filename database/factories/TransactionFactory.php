@@ -19,6 +19,7 @@ class TransactionFactory extends Factory
         $lastType = \App\Models\Type::all()->last()->id;
 
         return [
+            'date' => $this->faker->dateTimeBetween('-30days', 'now'),
             'voucher' => $this->faker->unique()->ean13(),
             'type_id' => $this->faker->numberBetween($firstType, $lastType),
             'user_id' => $this->faker->numberBetween($firstUser, $lastUser),

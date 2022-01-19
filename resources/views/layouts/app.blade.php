@@ -23,7 +23,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
   @yield('css')
 
 </head>
-<body class="hold-transition sidebar-mini dark-mode">
+<body class="hold-transition sidebar-mini layout-fixed">
     <div class="wrapper">
         <!-- Preloader -->
         <div class="preloader flex-column justify-content-center align-items-center">
@@ -67,12 +67,12 @@ scratch. This page gets rid of all links and provides the needed markup only.
                     <div class="row">
                         <div class="col-lg-12">
                             <div class="card">
-                            <div class="card-header bg-dark">
-                                <h5 class="m-0">@yield('card-header')</h5>
-                            </div>
-                            <div class="card-body">
-                                @yield('content')
-                            </div>
+                                <div class="card-header text-center">
+                                    <h5 class="m-0">@yield('card-header')</h5>
+                                </div>
+                                <div class="card-body">
+                                    @yield('content')
+                                </div>
                             </div>
                         </div>
                         <!-- /.col-md-6 -->

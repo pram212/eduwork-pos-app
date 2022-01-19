@@ -7,12 +7,12 @@
 @section('content')
     <div class="row mb-2">
         <div class="col-sm-2">
-            <a href="#" v-on:click="store()" class="btn btn-primary">Tambah Produk</a>
+            <a href="#" v-on:click="create()" class="btn btn-primary">Tambah Produk</a>
         </div>
     </div>
     <hr>
     {{-- data content --}}
-    <table class="table table-bordered table-sm text-center" id="table">
+    <table class="table table-bordered table-sm text-center" id="table_id">
         <thead>
             <th>No</th>
             <th>Kode</th>
@@ -121,31 +121,23 @@
         var action = '{{url('products')}}';
         var api = '{{url('api/products')}}';
         var columns = [
-            { data: "DT_RowIndex", name: "id" },
-            { data: "code", name: "code" },
-            { data: "name", name: "name" },
-            { data: "price", name: "price" },
-            { data: "stock", name: "stock" },
-            { data: "category", name: "category" },
-            { data: "warehouse", name: "warehouse" },
-            {
-                render: function (i, row, data, meta) {
-                    return `
-                <a href="#" onclick="app.update(event, ${meta.row})" class="btn btn-info btn-sm">Edit</a>
-                <a href="#" onclick="app.destroy(event, ${data.id})" class="btn btn-danger btn-sm">Hapus</a>
-                `;
-                },
-                orderable: false, searchable:false
-            }
+            { data: "id", name: "id" },
+            { data: "code", name: "code"},
+            { data: "name", name: "name"},
+            { data: "price", name: "price"},
+            { data: "stock", name: "stock"},
+            { data: "category", name: "category"},
+            { data: "warehouse", name: "warehouse"},
+            { data: "action", name: "action", orderable: false, searchable:false}
         ];
 
         var app = new Vue({
             el: '#app',
             data: {
-                datas: [], // objek-objek untuk datatable
-                data: {}, // sebuah objek untuk crud data
-                action: action,
-                api: api,
+                datas: [], // variable untuk menyimpan seluruh data produk
+                data: {}, // variable untuk menyimpan satu produk untuk crud
+                action,
+                api,
                 method: false, // method untuk crud data
                 message: "", // pesan dalam sweetalert
             },
@@ -155,43 +147,44 @@
             methods: {
                 datatable() {
                     const _this = this;
-                    _this.table = $("#table")
+                    _this.table = $("#table_id")
                         .DataTable({
-                            ajax: {
-                                url: _this.api,
-                                type: "GET",
-                            },
+                            processing: true,
+                            responsive: true,
+                            serverSide: true,
+                            ajax: _this.api,
                             columns,
                         })
                         .on("xhr", function () {
-                            _this.datas = _this.table.ajax.json().data;
+                            _this.datas = _this.table.ajax.json().data; // isi variable data dengan data dari datatable ajax
                         });
                 },
-
-                store() {
-                    this.data = {};
-                    this.method = false;
-                    $("#exampleModal").modal();
-                    $(".modal-title").text("Tambah Produk");
+                create() {
+                    this.data = {}; // kosongkan variable data
+                    this.method = false; // hilangkan element input yang namanya _method
+                    $("#exampleModal").modal(); // tampilkan modal
+                    $(".modal-title").text("Tambah Produk"); // ganti title modal
                 },
-                update(event, id) {
-                    this.data = this.datas[id];
-                    console.log(this.data)
-                    this.method = true;
-                    $(".modal-title").text("Edit Produk");
-                    $("#exampleModal").modal();
+                edit(event, id) {
+                    const productId = id - 1;
+                    this.data = this.datas[productId]; // isi variable data berdasarkan id dari parameter
+                    // console.log(this.data) testing
+                    this.method = true; // tampilkan elemen input yang namanya _method (untuk handle request method PUT)
+                    $("#exampleModal").modal(); // tampilkan modal box
+                    $(".modal-title").text("Edit Produk"); // ganti title modal
                 },
-                destroy(event, id) {
-                    this.action += "/" + id;
+                delete(event, id) {
+                    const productId = id - 1;
                     const _this = this;
-                    if (confirm("Apakah Anda yakin ingin menghapusnya?")) {
-                        axios
-                            .post(this.action, { _method: "DELETE" })
+                    this.action += "/" + id; // edit variable action yang disesuaikan dengan route hapus 'http://localhost:8000/products/{id}'
+                    if (confirm("Apakah Anda yakin ingin menghapusnya?")) // tampilkan alert confirm
+                    { // jika confirm bernilai true
+                        axios // jalankan ajax dengan axios
+                            .post(this.action, { _method: "DELETE" }) // akses route untuk hapus dengan method delete
                             .then((response) => {
-                                _this.table.ajax.reload();
-                                this.message = "Produk berhasil dihapus";
-                                Swal.fire(this.message);
-                                this.action = action
+                                this.table.ajax.reload(); // refresh table
+                                this.message = "Produk berhasil dihapus"; // siapkan pesan untuk sweetalert
+                                Swal.fire(this.message); // tampilkan sweet alert
                             });
                     }
                 },
@@ -208,7 +201,7 @@
                             $("#exampleModal").modal("hide");
                             _this.table.ajax.reload();
                             Swal.fire(this.message);
-                            this.action = action;
+                            console.log(this.action)
                         })
                         .catch(function (error) {
                             console.log(error)

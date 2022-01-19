@@ -22,68 +22,53 @@
         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
           <!-- Add icons to the links using the .nav-icon class
                with font-awesome or any other icon font library -->
+            <li class="nav-header">Home</li>
             <li class="nav-item">
-                <a href="{{route('home')}}" class="nav-link">
-                  <i class="nav-icon fas fa-tachometer-alt"></i>
-                  <p>
-                    Dashboard
-                  </p>
+                <a href="{{ route('home') }}" class="nav-link @if( request()->is('home') ) active @endif">
+                    <i class="nav-icon fas fa-chart-pie"></i>
+                    <p>Dashboard</p>
+                </a>
+            </li>
+            <li class="nav-header">Transaksi</li>
+            <li class="nav-item">
+                <a href="{{ route('penjualan.index') }}" class="nav-link @if( request()->is('penjualan') ) active @endif ">
+                    <i class="fas fa-cash-register nav-icon"></i> Penjualan
                 </a>
             </li>
             <li class="nav-item">
                 <a href="#" class="nav-link">
-                  <i class="nav-icon fas fa-tachometer-alt"></i>
-                  <p>
-                    Penjualan
-                  </p>
+                    <i class="fas fa-shopping-cart nav-icon"></i> Pembelian
                 </a>
             </li>
             <li class="nav-item">
                 <a href="#" class="nav-link">
-                  <i class="nav-icon fas fa-tachometer-alt"></i>
-                  <p>
-                    Pembelian
-                  </p>
+                    <i class="nav-icon fas fa-money-bill-wave"></i>
+                    Kas
                 </a>
             </li>
-            <li class="nav-item @if(
-                request()->is('products')||
-                request()->is('categories')||
-                request()->is('warehouses')
-                )
-                menu-open
-                @endif)">
-                <a href="#" class="nav-link">
-                    <i class="nav-icon fas fa-th"></i>
-                    <p>
-                        Produk
-                        <i class="right fas fa-angle-left"></i>
-                    </p>
+            <li class="nav-header">Master Produk</li>
+            <li class="nav-item">
+                <a href="{{ route('products.index') }}" class="nav-link @if(request()->is('products')) active @endif">
+                    <i class="nav-icon fas fa-th-large"></i>
+                    <p>Produk</p>
                 </a>
-                <ul class="nav nav-treeview">
-                    <li class="nav-item">
-                        <a href="{{route('products.index')}}" class="nav-link @if(request()->is('products')) active @endif">
-                            <i class="far fa-circle nav-icon"></i>
-                            <p>Daftar Produk</p>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{{route('categories.index')}}" class="nav-link @if(request()->is('categories')) active @endif">
-                        <i class="far fa-circle nav-icon"></i>
-                        <p>Daftar Kategori</p>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{{route('warehouses.index')}}" class="nav-link @if(request()->is('warehouses')) active @endif">
-                        <i class="far fa-circle nav-icon"></i>
-                        <p>Daftar Gudang</p>
-                        </a>
-                    </li>
-                </ul>
             </li>
             <li class="nav-item">
+                <a href="{{ route('categories.index') }}" class="nav-link @if(request()->is('categories')) active @endif">
+                    <i class="nav-icon fas fa-layer-group"></i>
+                    <p>Kategori</p>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ route('warehouses.index') }}" class="nav-link @if(request()->is('warehouses')) active @endif">
+                    <i class="nav-icon fas fa-warehouse"></i>
+                    <p>Gudang</p>
+                </a>
+            </li>
+            <li class="nav-header">Manajemen User</li>
+            <li class="nav-item">
                 <a href="#" class="nav-link">
-                  <i class="nav-icon fas fa-user"></i>
+                  <i class="nav-icon fas fa-id-card-alt"></i>
                   <p>
                     Pengguna
                   </p>

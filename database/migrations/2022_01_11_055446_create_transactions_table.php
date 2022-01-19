@@ -15,10 +15,14 @@ class CreateTransactionsTable extends Migration
     {
         Schema::create('transactions', function (Blueprint $table) {
             $table->id();
+            $table->date('date');
             $table->char('voucher')->unique();
             $table->foreignId('type_id')->constrained();
             $table->foreignId('user_id')->constrained();
+            $table->bigInteger('payment')->nullable();
+            $table->bigInteger('refund')->nullable();
             $table->char('supplier')->nullable();
+            $table->char('description')->nullable();
             $table->timestamps();
         });
     }
