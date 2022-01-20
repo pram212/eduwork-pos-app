@@ -9,7 +9,7 @@
                 </button>
             </div>
 
-            <form method="POST" v-on:submit="store( $event )" id="resetFormCreate">
+            <form method="POST" @submit="store( $event )" id="resetFormCreate">
             @csrf
             <div class="modal-body">
                 <div class="row">
@@ -28,7 +28,7 @@
                     <div class="col-4">
                         <div class="mb-3">
                             <label for="product_id[]" class="form-label" >Tambah Produk</label>
-                            <select class="form-control" v-model="product_id" v-on:change="selectProduct()">
+                            <select class="form-control" v-model="product_id" @change="selectProduct()">
                             @foreach ($products as $product)
                                 <option value="{{$product->id}}">{{$product->code}} | {{$product->name}} ( Rp {{$product->price}} )</option>
                             @endforeach
@@ -44,7 +44,7 @@
                                 <tr>
                                     <th>Kode</th>
                                     <th>Nama</th>
-                                    <th>Harga</th>
+                                    <th>Harga Jual</th>
                                     <th width="15%">Jumlah</th>
                                     <th>Opsi</th>
                                 </tr>

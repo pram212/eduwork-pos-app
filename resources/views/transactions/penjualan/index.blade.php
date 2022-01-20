@@ -99,25 +99,17 @@
          var app = new Vue({
             el: '#app',
             data: {
-                // datatable
                 datas: [],
-                data: [],
+                data: {},
                 api: api,
                 columns: columns,
-                // crud
                 products : JSON.parse('{!! $products !!}'),
-                // invoice
-                invoice: [],
                 product_id:{},
                 order: {},
                 totalHarga: 0,
                 pembayaran: 0,
                 kembalian: 0,
-                transaction: 0,
-                editData: {
-                    date: '',
-                },
-                tanggal : '2021-01-14'
+                transaction: 0
             },
             //data end
             mounted: function() {
@@ -139,15 +131,15 @@
                         columns: this.columns,
                     })
                     .on("xhr", function () {
-                        // isi variabel data dengan data yang ada pada datatable
+                        // isi variabel datas dengan data yang ada pada datatable
                         _this.datas = _this.table.ajax.json().data;
-                        // console.log(_this.datas)
+                        // console.log(_this.datas) testing
                     });
                 },
                 // menampilkan form penjualan baru
                 create() {
+                    // kosongkan data
                     this.data = {};
-                    this.method = false;
                     // tampilkan modal box
                     $('#formCreate').modal();
                     // kosongkan semua inputan
@@ -155,7 +147,7 @@
                     // kosongkan table order
                     $(".rowOrder").remove();
                 },
-                // menyimpan penjualan baru
+                // simpan transaksi ke database
                 store(event) {
                     event.preventDefault();
                     axios
@@ -196,46 +188,6 @@
                             // handle error
                             console.log(error);
                         })
-                },
-                edit(id) {
-                    const _this = this
-                    $("#editForm").modal();
-                    const url = '{!! url('get/penjualan') !!}' + '?id=' + id;
-                    axios
-                        .get( url )
-                        .then(function (response) {
-                            // handle success
-                            _this.data = response.data
-                            const arryProduk = _this.data.products;
-                            for (let i = 0; i < arryProduk.length; i++) {
-                                const element = arryProduk[i];
-                                const total = element.price * element.pivot.quantity
-                                _this.totalHarga += total;
-                            }
-                        })
-                        .catch(function (error) {
-                            // handle error
-                            console.log(error);
-                        })
-                    $(".editedRow").remove();
-                },
-                update(event, id) {
-                    event.preventDefault();
-                    const url = action + '/' + id;
-                    axios
-                        .put(url, new FormData( $(event.target)[0] ) )
-                        .then( (response) => {
-                            console.log(response)
-                            $('#editForm').modal("hide");
-                            app.notifySuccess(response);
-                            this.table.ajax.reload();
-                        })
-                        .catch( function (fouls) {
-                            // console.log(error)
-                            let messages = fouls.response.data.errors;
-                            app.nofifyError(messages);
-                        });
-
                 },
                 destroy(event, id) {
 

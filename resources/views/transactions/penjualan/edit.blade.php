@@ -143,7 +143,7 @@
 @endsection
 
 @push('script')
-<!-- Select2 -->
+    <!-- Select2 -->
     {{-- <script src="{{asset('adminLTE/plugins/select2/js/select2.full.min.js')}}"></script> --}}
     <!-- InputMask -->
     {{-- <script src="{{asset('adminLTE/plugins/moment/moment.min.js')}}"></script> --}}
@@ -158,11 +158,14 @@
                 transaksi: JSON.parse('{!! $transaction !!}'), // transaksi yang dikirim dari controller  untuk mengisi form edit
                 totalTagihan: 0, // untuk mengisi total harga dari orders
                 orders: [], // untuk memanipulasi tabel order
+                pembayaran: 0,
+                kembalian: 0
             },
             mounted: function () {
                 this.nilaiDefault(this.transaksi.products) // isi form edit
                 this.hitungSubtotal() // hitung total harga order
-                // console.log(this.mataUang(10000)) testing method convert angka ke matauang
+                this.pembayaran = this.transaksi.payment;
+                this.kembalian = this.transaksi.refund;
             },
             methods: {
                 // method nilai default form
@@ -259,11 +262,16 @@
                 },
                 mataUang(number) {
                     return number.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
+                },
+                // // method hitung kembalian
+                hitungKembalian(e) {
+                    let nilai = e.target.value;
+                    let kembalian = nilai - this.totalTagihan;
+                    this.transaksi.payment = nilai;
+                    this.transaksi.refund = kembalian;
                 }
             },
-            computed: {
 
-            },
         })
     </script>
 @endpush
