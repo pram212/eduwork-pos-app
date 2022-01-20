@@ -6,25 +6,11 @@
 @section('sub-breadcrumb', 'Riwayat Penjualan')
 
 @section('content')
-    @if (Session::get('success'))
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <strong>Mantap!</strong> {{ Session::get('success') }}
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-
-        <script>
-           $('.alert').alert()
-        </script>
-    @endif
-
     <div class="row mb-3">
         <div class="col">
             <a href="#" v-on:click="create()" class="btn btn-primary">Penjualan Baru</a>
         </div>
     </div>
-
     <div class="row">
         <div class="col">
             <table class="table table-bordered text-dark text-center table-sm table-striped" id="table">
@@ -83,7 +69,15 @@
 
     {{-- sweetalert CDN --}}
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/numeral.js/2.0.6/numeral.min.js"></script>
+    @if (Session::get('success'))
+        <script>
+            Swal.fire({
+                title: 'Mantap',
+                icon: 'success',
+                text: '{!! Session::get('success') !!}',
+            });
+        </script>
+    @endif
     <script>
         var action = '{{url('penjualan')}}';
         var api = '{{ url('api/transactions') }}';
@@ -167,6 +161,7 @@
                             app.nofifyError(messages);
                         });
                 },
+                // menampilkan detil penjualan
                 show(id) {
                     const _this = this
                     $("#showBox").modal();
@@ -176,7 +171,6 @@
                         .then(function (response) {
                             // handle success
                             _this.data = response.data
-
                             const arryProduk = _this.data.products;
                             for (let i = 0; i < arryProduk.length; i++) {
                                 const element = arryProduk[i];
@@ -189,9 +183,29 @@
                             console.log(error);
                         })
                 },
-                destroy(event, id) {
-
+                // menghapus penjualan
+                destroy(id) {
+                    Swal.fire({
+                        title: 'Are you sure?',
+                        text: "You won't be able to revert this!",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Yes, delete it!'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            axios.delete(action + '/' + id);
+                            Swal.fire(
+                                'Deleted!',
+                                'Your file has been deleted.',
+                                'success'
+                            )
+                            this.table.ajax.reload();
+                        }
+                    });
                 },
+                // melakukan pembayaran
                 payment(event) {
                     event.preventDefault();
                     const url = '{{url('payment')}}' + '?id=' + this.transaction;
@@ -208,6 +222,7 @@
                             app.nofifyError(messages);
                         });
                 },
+                // notifikasi proses berhasil
                 notifySuccess(text) {
                     Swal.fire({
                         title: "Mantap",
@@ -215,6 +230,7 @@
                         text: text,
                     });
                 },
+                // notifikasi proses gagal
                 nofifyError (messages) {
                     let error = "";
                     $.each(messages, function (indexInArray, valueOfElement) {
@@ -229,10 +245,12 @@
                     });
 
                 },
+                // menghitung kembalian
                 hitungKembalian(event) {
                     this.kembalian = event.target.value - this.totalHarga;
                     $("#kembalian").val(this.kembalian);
                 },
+                // menghapus ordes tertentu dari daftar cart
                 hapusOrder(event){
                     var rmOrder = $(".rmOrder");
                     // ambil index dari elemen yang diklik
@@ -243,6 +261,7 @@
                     // hapus tabel row tersebut
                     rowOrder.remove();
                 },
+                // menambahkan produk baru
                 selectProduct() {
                     const _this = this;
                     const id = this.product_id - 1

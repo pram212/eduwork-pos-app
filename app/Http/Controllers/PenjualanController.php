@@ -50,7 +50,6 @@ class PenjualanController extends Controller
             'user_id' => Auth::user()->id,
             'date' => $request->date,
             'voucher' => 'TxPay' . date('mdHis'),
-            'reff' => $request->reff,
             'description' => $request->description,
         ]);
 
@@ -135,7 +134,8 @@ class PenjualanController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $transaction = Transaction::find($id);
+        $transaction->delete();
     }
 
     public function payment(Request $request)

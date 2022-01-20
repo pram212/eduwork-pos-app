@@ -20,9 +20,10 @@ class CreateProductsTable extends Migration
             $table->bigInteger('price');
             $table->bigInteger('stock')->default(0);
             $table->text('description')->nullable();
-            $table->foreignId('category_id')->nullable()->constrained()->nullOnDelete();
-            $table->foreignId('warehouse_id')->nullable()->constrained()->nullOnDelete();
+            $table->foreignId('category_id')->nullable()->constrained();
+            $table->foreignId('warehouse_id')->nullable()->constrained();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

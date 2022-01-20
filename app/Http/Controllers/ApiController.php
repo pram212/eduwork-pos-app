@@ -85,9 +85,11 @@ class ApiController extends Controller
             })
             ->addColumn('action', function($transactions) {
                 $buttons = '
-                <a href="' . url('penjualan/'. $transactions->id . '/edit') .'" class="btn btn-primary btn-sm"><i class="fas fa-pencil-alt"></i></a>
-                <a href="#" onclick="app.show('. $transactions->id .')" class="btn btn-info btn-sm"><i class="fas fa-eye"></i></a>
-                <a href="#" onclick="app.destroy(event, '. $transactions->id .')" class="btn btn-danger btn-sm"><i class="fas fa-trash-alt"></i></a>
+                <a href="' . url('penjualan/'. $transactions->id . '/edit') .'" class="btn btn-primary btn-sm">edit</a>
+                <a href="#" onclick="app.show('. $transactions->id .')" class="btn btn-info btn-sm">detil</a>
+                <a href="#" onclick="app.destroy('. $transactions->id .')" class="btn btn-danger btn-sm">
+                    hapus
+                </a>
                 ';
                 return $buttons;
             })

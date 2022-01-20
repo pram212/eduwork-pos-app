@@ -174,19 +174,25 @@
                     $(".modal-title").text("Edit Produk"); // ganti title modal
                 },
                 delete(event, id) {
-                    const productId = id - 1;
-                    const _this = this;
-                    this.action += "/" + id; // edit variable action yang disesuaikan dengan route hapus 'http://localhost:8000/products/{id}'
-                    if (confirm("Apakah Anda yakin ingin menghapusnya?")) // tampilkan alert confirm
-                    { // jika confirm bernilai true
-                        axios // jalankan ajax dengan axios
-                            .post(this.action, { _method: "DELETE" }) // akses route untuk hapus dengan method delete
-                            .then((response) => {
-                                this.table.ajax.reload(); // refresh table
-                                this.message = "Produk berhasil dihapus"; // siapkan pesan untuk sweetalert
-                                Swal.fire(this.message); // tampilkan sweet alert
-                            });
-                    }
+                    Swal.fire({
+                        title: 'Are you sure?',
+                        text: "You won't be able to revert this!",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Yes, delete it!'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            axios.delete(action + '/' + id);
+                            Swal.fire(
+                                'Deleted!',
+                                'Your file has been deleted.',
+                                'success'
+                            )
+                            this.table.ajax.reload();
+                        }
+                    });
                 },
                 submitForm(event, id) {
                     event.preventDefault();

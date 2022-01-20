@@ -24,6 +24,7 @@ class CreateTransactionsTable extends Migration
             $table->char('supplier')->nullable();
             $table->char('description')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

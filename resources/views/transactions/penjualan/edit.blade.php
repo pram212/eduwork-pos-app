@@ -7,131 +7,148 @@
 
 
 @section('content')
-<form action="{{ url('penjualan/'. $transaction->id ) }}" method="POST">
-    @csrf
-    @method('PUT')
-    <div class="row">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-header bg-secondary">
-                    <h5 class="card-title">Detil Transaksi</h5>
-                </div>
-                <div class="card-body">
-                    <table class="table table-sm">
-                        <tr>
-                            <th>Tanggal</th>
-                            <td>
-                                <input type="date" name="date" id="date" class="form-control form-control-sm" value="{{$transaction->date}}">
-                            </td>
-                        </tr>
-                        <tr>
-                            <th>Kode</th>
-                            <td>
-                                <input type="text" name="voucher" id="voucher" class="form-control form-control-sm" value="{{ $transaction->voucher }}">
-                            </td>
-                        </tr>
-                        <tr>
-                            <th>Deskripsi</th>
-                            <td>
-                                <input type="text" name="description" id="description" class="form-control form-control-sm" value="{{ $transaction->description }}">
-                            </td>
-                        </tr>
-                    </table>
-                </div>
-                {{-- /. card-cody end --}}
-            </div>
-            {{-- /. card-end --}}
+    @if ($errors->any())
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @foreach($errors->all() as $error)
+            <ul>
+                <li>{{ $error }}</li>
+            </ul>
+            @endforeach
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
         </div>
-        {{-- col-12 end --}}
-        <div class="col-12">
-            <div class="card">
-                <div class="card-header bg-secondary">
-                    <h5 class="card-title">Order</h5>
-                </div>
-                <div class="card-body">
-                    <div class="mb-3">
-                        <select class="form-control form-control-sm" @change="orderBaru($event)">
-                            <option value="" selected >Tambah Produk</option>
-                            @foreach ($products as $product)
-                                <option value="{{$product->id}}">{{$product->code}} | {{$product->name}} ( Rp {{$product->price}} )</option>
-                            @endforeach
-                        </select>
+
+        <script>
+            $('.alert').alert()
+        </script>
+    @endif
+
+    <form action="{{ url('penjualan/'. $transaction->id ) }}" method="POST">
+        @csrf
+        @method('PUT')
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header bg-secondary">
+                        <h5 class="card-title">Detil Transaksi</h5>
                     </div>
-                    <table class="table table-sm" width="100%">
-                        <thead class="text-center">
+                    <div class="card-body">
+                        <table class="table table-sm">
+                            <tr>
+                                <th>Tanggal</th>
+                                <td>
+                                    <input type="date" name="date" id="date" class="form-control form-control-sm" value="{!! old('date', optional($transaction)->date) !!}">
+                                </td>
+                            </tr>
                             <tr>
                                 <th>Kode</th>
-                                <th>Nama</th>
-                                <th>Harga Jual</th>
-                                <th width="15%">Jumlah</th>
-                                <th width="20%">SubTotal</th>
-                                <th width="15%">Opsi</th>
-                            </tr>
-                        </thead>
-                        <tbody class="text-center">
-                            <tr v-for="(product, k) in orders" :key="k">
-                                <input type="hidden" name="product_id[]" :value="product.product_id">
                                 <td>
-                                    @{{product.code}}
+                                    <input type="text" name="voucher" id="voucher" class="form-control form-control-sm" value="{!! old('voucher', optional($transaction)->voucher) !!}">
                                 </td>
-                                <td>@{{product.name}}</td>
-                                <td>@{{product.price}}</td>
-                                <td>
-                                    <input type="number" :name="'quantity[' + product.product_id +']'" class="form-control form-control-sm qty" :value="product.qty" @keyup="editQuantity($event)">
-                                </td>
-                                <td>@{{product.line_total}}</td>
-                                <td>
-                                    <button type="button" class="btn btn-sm btn-danger" @click="hapusOrder(k, product)">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </td>
-                            </tr>
-                        </tbody>
-                        <tfoot class="text-right font-italic">
-                            <tr>
-                                <td colspan="4"><b>Total Tagihan</b></td>
-                                <td class="text-center">
-                                    <input type="text" class="form-control form-dontrol-sm text-center" :value="totalTagihan">
-                                </td>
-                                <td></td>
                             </tr>
                             <tr>
-                                <td colspan="4"><b>Pembayaran</b></td>
-                                <td class="text-center">
-                                    <input type="number" name="payment" id="payment" class="form-control form-control-sm text-center" :value="transaksi.payment">
+                                <th>Deskripsi</th>
+                                <td>
+                                    <input type="text" name="description" id="description" class="form-control form-control-sm" value="{!! old('voucher', optional($transaction)->description) !!}">
                                 </td>
-                                <td></td>
                             </tr>
-                            <tr>
-                                <td colspan="4"><b>Kembalian</b></td>
-                                <td class="text-center">
-                                    <input type="number" name="refund" id="refund" class="form-control form-control-sm text-center" :value="transaksi.refund">
-                                </td>
-                                <td></td>
-                            </tr>
-                        </tfoot>
-                    </table>
+                        </table>
+                    </div>
+                    {{-- /. card-cody end --}}
                 </div>
-                {{-- /. card-body end --}}
+                {{-- /. card-end --}}
             </div>
-            {{-- /. card end --}}
+            {{-- col-12 end --}}
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header bg-secondary">
+                        <h5 class="card-title">Order</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <select class="form-control form-control-sm" @change="orderBaru($event)">
+                                <option value="" selected >Tambah Produk</option>
+                                @foreach ($products as $product)
+                                    <option value="{{$product->id}}">{{$product->code}} | {{$product->name}} ( Rp {{$product->price}} )</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <table class="table table-sm" width="100%">
+                            <thead class="text-center">
+                                <tr>
+                                    <th>Kode</th>
+                                    <th>Nama</th>
+                                    <th>Harga Jual</th>
+                                    <th width="15%">Jumlah</th>
+                                    <th width="20%">SubTotal</th>
+                                    <th width="15%">Opsi</th>
+                                </tr>
+                            </thead>
+                            <tbody class="text-center">
+                                <tr v-for="(product, k) in orders" :key="k">
+                                    <input type="hidden" name="product_id[]" :value="product.product_id">
+                                    <td>
+                                        @{{product.code}}
+                                    </td>
+                                    <td>@{{product.name}}</td>
+                                    <td>@{{product.price}}</td>
+                                    <td>
+                                        <input type="number" :name="'quantity[' + product.product_id +']'" class="form-control form-control-sm qty" :value="product.qty" @keyup="editQuantity($event)">
+                                    </td>
+                                    <td>@{{product.line_total}}</td>
+                                    <td>
+                                        <button type="button" class="btn btn-sm btn-danger" @click="hapusOrder(k, product)">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <tfoot class="text-right font-italic">
+                                <tr>
+                                    <td colspan="4"><b>Total Tagihan</b></td>
+                                    <td class="text-center">
+                                        <input type="text" class="form-control form-dontrol-sm text-center" :value="totalTagihan">
+                                    </td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="4"><b>Pembayaran</b></td>
+                                    <td class="text-center">
+                                        <input type="number" name="payment" id="payment" class="form-control form-control-sm text-center" :value="transaksi.payment">
+                                    </td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="4"><b>Kembalian</b></td>
+                                    <td class="text-center">
+                                        <input type="number" name="refund" id="refund" class="form-control form-control-sm text-center" :value="transaksi.refund">
+                                    </td>
+                                    <td></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                    {{-- /. card-body end --}}
+                </div>
+                {{-- /. card end --}}
+            </div>
+            {{-- /. col-12 end --}}
         </div>
-        {{-- /. col-12 end --}}
-    </div>
-    {{-- /. row end --}}
-    <div class="row">
-        <div class="col-6">
-            <a href="{{ url()->previous() }}" class="">kembali</a>
+        {{-- /. row end --}}
+        <div class="row">
+            <div class="col-6">
+                <a href="{{ url()->previous() }}" class="">kembali</a>
+            </div>
+            {{-- /. col-6 end --}}
+            <div class="col-6">
+                <button type="submit" class="btn btn-primary float-right">Ubah</button>
+            </div>
+            {{-- /. col-6 end --}}
         </div>
-        {{-- /. col-6 end --}}
-        <div class="col-6">
-            <button type="submit" class="btn btn-primary float-right">Ubah</button>
-        </div>
-        {{-- /. col-6 end --}}
-    </div>
-    {{-- /. row end --}}
-</form>
-{{-- /. form end --}}
+        {{-- /. row end --}}
+    </form>
+    {{-- /. form end --}}
 @endsection
 
 @section('css')
@@ -149,6 +166,7 @@
     {{-- <script src="{{asset('adminLTE/plugins/moment/moment.min.js')}}"></script> --}}
     <!-- Tempusdominus Bootstrap 4 -->
     {{-- <script src="{{asset('adminLTE/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js')}}"></script> --}}
+
 
     <script>
         var app = new Vue({
