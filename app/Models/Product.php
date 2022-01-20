@@ -15,16 +15,16 @@ class Product extends Model
 
     public function category()
     {
-        return $this->belongsTo(Category::class);
+        return $this->belongsTo(Category::class)->withTrashed();
     }
 
     public function warehouse()
     {
-        return $this->belongsTo(Warehouse::class);
+        return $this->belongsTo(Warehouse::class)->withTrashed();
     }
 
     public function transactions()
     {
-        return $this->belongsToMany(Transaction::class)->withPivot('quantity');
+        return $this->belongsToMany(Transaction::class)->withPivot('quantity')->withTrashed();
     }
 }

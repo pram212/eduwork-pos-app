@@ -16,8 +16,9 @@ class ApiController extends Controller
 
     public function getProducts()
     {
-        $products = Product::all();
-
+        $products = Product::with(['category', 'warehouse'])->get();
+        // return $products;
+        // die;
         $datatable = Datatables::of($products)
                     ->removeColumn('created_at')
                     ->removeColumn('updated_at')
@@ -37,6 +38,7 @@ class ApiController extends Controller
                     })
                     ->addIndexColumn()
                     ->make(true);
+
         return $datatable;
     }
 
