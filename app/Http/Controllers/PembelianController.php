@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Transaction;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use App\Models\Transaction;
+use App\Models\Product;
 
 class PembelianController extends Controller
 {
@@ -14,7 +16,8 @@ class PembelianController extends Controller
      */
     public function index()
     {
-        //
+        $products = Product::where('stock', '!=', 0)->get();
+        return view('transactions.pembelian.index', compact('products'));
     }
 
     /**
@@ -35,7 +38,41 @@ class PembelianController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'date' => 'required',
+            'supplier' => 'required',
+            'quantity' => 'required',
+            'product_id' => 'required',
+            'supplier' => 'required'
+        ]);
+
+        $transaction = Transaction::create([
+            'type_id' => 2,
+            'user_id' => Auth::user()->id,
+            'date' => $request->date,
+            'supplier' => $request->supplier,
+            'voucher' => 'PO-' . date('mdHis'),
+            'description' => $request->description,
+        ]);
+
+        $quantities = collect($request->quantity)
+                        ->map( function($quantity) {
+                            return ['quantity' => $quantity];
+                        } );
+
+        $transaction->products()->sync($quantities);
+
+        $data = $transaction->load(['products', 'user']);
+
+        $totalHarga = 0;
+
+        foreach ($transaction->products as $product) {
+            $harga = $product->price * $product->pivot->quantity;
+            $totalHarga = $harga;
+        }
+
+        return [$totalHarga, $data];
+
     }
 
     /**
@@ -44,11 +81,12 @@ class PembelianController extends Controller
      * @param  \App\Models\Transaction  $transaction
      * @return \Illuminate\Http\Response
      */
-    public function show(Transaction $transaction)
+    public function show($id)
     {
-        //
-    }
+        $transaction = Transaction::where('id', $id)->with(['products', 'user'])->get();
+        return response()->json($transaction);
 
+    }
     /**
      * Show the form for editing the specified resource.
      *
@@ -57,7 +95,8 @@ class PembelianController extends Controller
      */
     public function edit(Transaction $transaction)
     {
-        //
+        $products = Product::where('stock', '!=', null)->get();
+        return view('transactions.pembelian.edit', compact('products', 'transaction'));
     }
 
     /**
@@ -69,7 +108,33 @@ class PembelianController extends Controller
      */
     public function update(Request $request, Transaction $transaction)
     {
-        //
+        $request->validate([
+            'date' => 'required',
+            'voucher' => 'required',
+            'payment' => 'required',
+            'refund' => 'required',
+            'quantity' => 'required',
+            'product_id' => 'required',
+        ]);
+
+        $transaction->update([
+            'date' => $request->date,
+            'type_id' => 1,
+            'user_id' => Auth::user()->id,
+            'voucher' => 'TxPay' . date('mdHis'),
+            'payment' => $request->payment,
+            'refund' => $request->refund,
+            'description' => $request->description,
+        ]);
+
+        $quantities = collect($request->quantity)
+                        ->map( function($quantity) {
+                            return ['quantity' => $quantity];
+                        } );
+
+        $transaction->products()->sync($quantities);
+
+        return redirect('/pembelian')->with('success', 'Data berhasil diubah');
     }
 
     /**
@@ -80,6 +145,23 @@ class PembelianController extends Controller
      */
     public function destroy(Transaction $transaction)
     {
-        //
+        $transaction->delete();
+    }
+
+    public function payment(Request $request)
+    {
+        $request->validate([
+            'pembayaran' => 'required',
+            'kembalian' => 'required',
+        ]);
+
+        $transaction = Transaction::find($request->id);
+
+        $transaction->payment = $request->pembayaran;
+        $transaction->refund = $request->kembalian;
+        $transaction->save();
+
+        return response()->json($transaction);
+
     }
 }

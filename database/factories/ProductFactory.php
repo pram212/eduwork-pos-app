@@ -22,6 +22,7 @@ class ProductFactory extends Factory
         return [
             'code' => $this->faker->unique()->ean8(),
             'name' => $this->faker->word(),
+            'cost' => $this->faker->numberBetween(100, 1000),
             'price' => $this->faker->numberBetween(1000, 10000),
             'stock' => $this->faker->numberBetween(1, 10),
             'category_id' => $this->faker->numberBetween($firstCategory, $lastCategory),

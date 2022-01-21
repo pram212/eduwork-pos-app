@@ -17,7 +17,8 @@
             <th>No</th>
             <th>Kode</th>
             <th>Nama</th>
-            <th>Harga Satuan</th>
+            <th>Harga Beli</th>
+            <th>Harga Jual</th>
             <th>Stok</th>
             <th>Kategori</th>
             <th>Lokasi</th>
@@ -54,8 +55,14 @@
                         </div>
                         <div class="col-6">
                             <div class="mb-3">
-                                <label for="price" class="form-label">Harga</label>
-                                <input type="number" name="price" id="price" class="form-control" placeholder="Masukan Harga Satuan" :value="data.price">
+                                <label for="cost" class="form-label">Harga Beli</label>
+                                <input type="number" name="cost" id="cost" class="form-control" placeholder="Masukan Harga Beli" :value="data.cost">
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="mb-3">
+                                <label for="price" class="form-label">Harga Jual</label>
+                                <input type="number" name="price" id="price" class="form-control" placeholder="Masukan Harga Jual" :value="data.price">
                             </div>
                         </div>
                         <div class="col-6">
@@ -84,7 +91,7 @@
                               </select>
                             </div>
                         </div>
-                        <div class="col-12">
+                        <div class="col-6">
                             <div class="mb-3">
                                 <label for="description" class="form-label">Deskripsi</label>
                                 <input type="text" name="description" id="description" class="form-control" placeholder="Masukan Deskripsi Produk" :value="data.description">
@@ -124,6 +131,7 @@
             { data: "id", name: "id" },
             { data: "code", name: "code"},
             { data: "name", name: "name"},
+            { data: "cost", name: "cost"},
             { data: "price", name: "price"},
             { data: "stock", name: "stock"},
             { data: "category", name: "category"},

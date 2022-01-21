@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Transaction;
-use Illuminate\Http\Request;
-use App\Models\Product;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
+use App\Models\Transaction;
+use App\Models\Product;
 
 class PenjualanController extends Controller
 {
@@ -78,10 +78,14 @@ class PenjualanController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
+    public function show(Transaction $transaction)
+    {
+
+    }
+
     public function edit($id)
     {
         $transaction = Transaction::where('id', $id)->with('products')->first();
-        // dd($transaction);
         $products = Product::where('stock', '!=', null)->get();
         return view('transactions.penjualan.edit', compact('products', 'transaction'));
     }
@@ -159,7 +163,6 @@ class PenjualanController extends Controller
     {
         $penjualan = Transaction::where('id', $request->id)->with(['products', 'user'])->first();
         return $penjualan;
-
     }
 
 }

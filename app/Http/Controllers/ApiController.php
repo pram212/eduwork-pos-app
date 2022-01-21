@@ -2,23 +2,20 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Product;
-use App\Models\Category;
+use Yajra\Datatables\Datatables;
+use Illuminate\Http\Request;
 use App\Models\Transaction;
 use App\Models\Warehouse;
-use Illuminate\Http\Request;
-use Yajra\DataTables\Contracts\DataTable;
-use Yajra\Datatables\Datatables;
+use App\Models\Category;
+use App\Models\Supplier;
+use App\Models\Product;
+use App\Models\User;
 
 class ApiController extends Controller
 {
-    // method-method yang berfungsi untuk mengambil data dan mengembalikannya dengan format datatables plugin.
-
     public function getProducts()
     {
-        $products = Product::with(['category', 'warehouse'])->get();
-        // return $products;
-        // die;
+        $products = Product::all();
         $datatable = Datatables::of($products)
                     ->removeColumn('created_at')
                     ->removeColumn('updated_at')
@@ -31,7 +28,6 @@ class ApiController extends Controller
                     ->addColumn('action', function($transactions) {
                         $buttons = '
                         <a href="#" onclick="app.edit(event, '. $transactions->id.')" class="btn btn-primary btn-sm"><i class="fas fa-pencil-alt"></i></a>
-                        <a href="#" class="btn btn-info btn-sm"><i class="fas fa-eye"></i></a>
                         <a href="#" onclick="app.delete(event, '. $transactions->id .')" class="btn btn-danger btn-sm"><i class="fas fa-trash-alt"></i></a>
                         ';
                         return $buttons;
@@ -53,6 +49,19 @@ class ApiController extends Controller
     {
         $warehouses = Warehouse::orderByDesc('id');
         $datatable = DataTables::of($warehouses)->addIndexColumn()->make(true);
+        return $datatable;
+    }
+    public function getSuppliers()
+    {
+        $suppliers = Supplier::orderByDesc('id');
+        $datatable = DataTables::of($suppliers)->addIndexColumn()->make(true);
+        return $datatable;
+    }
+
+    public function getUsers()
+    {
+        $users = User::orderByDesc('id');
+        $datatable = DataTables::of($users)->addIndexColumn()->make(true);
         return $datatable;
     }
 

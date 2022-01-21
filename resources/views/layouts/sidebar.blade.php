@@ -36,7 +36,7 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a href="#" class="nav-link">
+                <a href="{{ route('pembelian.index') }}" class="nav-link @if( request()->is('pembelian') ) active @endif">
                     <i class="fas fa-shopping-cart nav-icon"></i> Pembelian
                 </a>
             </li>
@@ -65,9 +65,15 @@
                     <p>Gudang</p>
                 </a>
             </li>
+            <li class="nav-item">
+                <a href="{{ route('suppliers.index') }}" class="nav-link @if(request()->is('suppliers')) active @endif">
+                    <i class="nav-icon fas fa-store"></i>
+                    <p>Supplier</p>
+                </a>
+            </li>
             <li class="nav-header">Manajemen User</li>
             <li class="nav-item">
-                <a href="#" class="nav-link">
+                <a href="{{ route('users.index') }}" class="nav-link @if(request()->is('users')) active @endif">
                   <i class="nav-icon fas fa-id-card-alt"></i>
                   <p>
                     Pengguna

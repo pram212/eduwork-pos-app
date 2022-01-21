@@ -17,6 +17,7 @@ class CreateProductsTable extends Migration
             $table->id();
             $table->char('code')->unique();
             $table->char('name');
+            $table->bigInteger('cost');
             $table->bigInteger('price');
             $table->bigInteger('stock')->default(0);
             $table->text('description')->nullable();

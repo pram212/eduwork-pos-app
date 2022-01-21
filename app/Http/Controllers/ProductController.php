@@ -33,12 +33,11 @@ class ProductController extends Controller
             'code' => 'required|numeric|unique:products',
             'name' => 'required',
             'price' => 'required',
+            'cost' => 'required',
         ]);
 
         $product = new Product();
-
         $product->create($request->all());
-
         return response()->json($product);
     }
 
@@ -55,10 +54,9 @@ class ProductController extends Controller
             'code' => 'required|numeric',
             'name' => 'required',
             'price' => 'required',
+            'cost' => 'required',
         ]);
-
         $product->update($request->all());
-
         return response()->json($product);
     }
 
