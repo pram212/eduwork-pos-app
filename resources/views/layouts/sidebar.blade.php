@@ -37,7 +37,7 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a href="#" class="nav-link">
+                <a href="{{ route('purchases.index') }}" class="nav-link @if(request()->is('purchases')) active @endif">
                     <i class="fas fa-shopping-cart nav-icon"></i> <p>Pembelian (PO)</p>
                 </a>
             </li>

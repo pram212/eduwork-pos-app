@@ -30,6 +30,7 @@ Route::middleware('auth')->group(function(){
     Route::resource('transactions', \App\Http\Controllers\TransactionController::class);
     Route::resource('users', \App\Http\Controllers\UserController::class);
     Route::resource('sales', \App\Http\Controllers\SaleController::class);
+    Route::resource('purchases', \App\Http\Controllers\PurchaseController::class);
     Route::put('password/reset/manual', [\App\Http\Controllers\UserController::class, 'resetPassword']);
     Route::get('activities', [\App\Http\Controllers\ActivityController::class, 'index'])->name('activities.index');
 
@@ -42,6 +43,7 @@ Route::middleware('auth')->group(function(){
     Route::get('api/users', [\App\Http\Controllers\ApiController::class, 'getUsers']);
     Route::get('datatable/activities', [\App\Http\Controllers\DataTablesController::class, 'getActivities']);
     Route::get('datatable/sales', [\App\Http\Controllers\DataTablesController::class, 'getSales']);
+    Route::get('datatable/purchases', [\App\Http\Controllers\DataTablesController::class, 'getPurchases']);
     Route::get('get/sale/{id}', [\App\Http\Controllers\SaleController::class, 'getSale']);
 
 });
