@@ -28,9 +28,10 @@ Route::middleware('auth')->group(function(){
     Route::resource('warehouses', \App\Http\Controllers\WarehouseController::class);
     Route::resource('suppliers', \App\Http\Controllers\SupplierController::class);
     Route::resource('transactions', \App\Http\Controllers\TransactionController::class);
-    Route::resource('penjualan', \App\Http\Controllers\PenjualanController::class);
-    Route::resource('pembelian', \App\Http\Controllers\PembelianController::class);
     Route::resource('users', \App\Http\Controllers\UserController::class);
+    Route::resource('sales', \App\Http\Controllers\SaleController::class);
+    Route::put('password/reset/manual', [\App\Http\Controllers\UserController::class, 'resetPassword']);
+    Route::get('activities', [\App\Http\Controllers\ActivityController::class, 'index'])->name('activities.index');
 
     // api routes
     Route::get('api/products', [\App\Http\Controllers\ApiController::class, 'getProducts']);
@@ -39,11 +40,9 @@ Route::middleware('auth')->group(function(){
     Route::get('api/transactions', [\App\Http\Controllers\ApiController::class, 'getTransactions']);
     Route::get('api/suppliers', [\App\Http\Controllers\ApiController::class, 'getSuppliers']);
     Route::get('api/users', [\App\Http\Controllers\ApiController::class, 'getUsers']);
-    Route::get('get/product/{id}', [\App\Http\Controllers\ApiController::class, 'getProduct']);
-
-    Route::get('get/penjualan', [\App\Http\Controllers\PenjualanController::class, 'getPenjualan']);
-    Route::post('payment', [\App\Http\Controllers\PenjualanController::class, 'payment']);
-    Route::post('payment/pembelian/{id}', [\App\Http\Controllers\PembelianController::class, 'payment']);
+    Route::get('datatable/activities', [\App\Http\Controllers\DataTablesController::class, 'getActivities']);
+    Route::get('datatable/sales', [\App\Http\Controllers\DataTablesController::class, 'getSales']);
+    Route::get('get/sale/{id}', [\App\Http\Controllers\SaleController::class, 'getSale']);
 
 });
 

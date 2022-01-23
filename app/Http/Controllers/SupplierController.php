@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Supplier;
+use App\Models\Activity;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class SupplierController extends Controller
 {
@@ -45,6 +47,11 @@ class SupplierController extends Controller
         $supplier = new Supplier();
         $supplier->create($request->all());
 
+        Activity::create([
+            'user_id' =>  Auth::id(),
+            'activity' => "Menambahkan Supplier Baru (" . $request->company_name .")",
+        ]);
+
         return response()->json($supplier);
     }
 
@@ -85,6 +92,12 @@ class SupplierController extends Controller
             'phone' => $request->phone,
             'address' => $request->address,
         ]);
+
+        Activity::create([
+            'user_id' =>  Auth::id(),
+            'activity' => "Mengubah Supplier (" . $request->company_name . ")",
+        ]);
+
         return response()->json($supplier);
     }
 
@@ -96,6 +109,11 @@ class SupplierController extends Controller
      */
     public function destroy(Supplier $supplier)
     {
+        Activity::create([
+            'user_id' => Auth::id(),
+            'activity' => "Menghapus Supplier (" . $supplier->company_name.")",
+        ]);
+
         $supplier->delete();
         return response()->json($supplier);
     }

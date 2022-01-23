@@ -13,7 +13,7 @@
           <img src="{{asset('adminLTE/dist/img/user2-160x160.jpg')}}" class="img-circle elevation-2" alt="User Image">
         </div>
         <div class="info">
-          <a href="#" class="d-block">{{ Auth::user()->name }}</a>
+          <a href="{{ route( 'users.edit', ['user' => Auth::user()->id ] ) }}" class="d-block">{{ Auth::user()->name }}</a>
         </div>
       </div>
 
@@ -29,24 +29,19 @@
                     <p>Dashboard</p>
                 </a>
             </li>
-            <li class="nav-header">Transaksi</li>
+            <li class="nav-header">Manajemen Transaksi</li>
             <li class="nav-item">
-                <a href="{{ route('penjualan.index') }}" class="nav-link @if( request()->is('penjualan') ) active @endif ">
-                    <i class="fas fa-cash-register nav-icon"></i> Penjualan
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="{{ route('pembelian.index') }}" class="nav-link @if( request()->is('pembelian') ) active @endif">
-                    <i class="fas fa-shopping-cart nav-icon"></i> Pembelian
+                <a href="{{ route('sales.index') }}" class="nav-link @if(request()->is('sales')) active @endif">
+                    <i class="nav-icon fas fa-cash-register"></i>
+                    <p>Penjualan</p>
                 </a>
             </li>
             <li class="nav-item">
                 <a href="#" class="nav-link">
-                    <i class="nav-icon fas fa-money-bill-wave"></i>
-                    Kas
+                    <i class="fas fa-shopping-cart nav-icon"></i> <p>Pembelian (PO)</p>
                 </a>
             </li>
-            <li class="nav-header">Master Produk</li>
+            <li class="nav-header">Manajemen Produk</li>
             <li class="nav-item">
                 <a href="{{ route('products.index') }}" class="nav-link @if(request()->is('products')) active @endif">
                     <i class="nav-icon fas fa-th-large"></i>
@@ -76,7 +71,15 @@
                 <a href="{{ route('users.index') }}" class="nav-link @if(request()->is('users')) active @endif">
                   <i class="nav-icon fas fa-id-card-alt"></i>
                   <p>
-                    Pengguna
+                    Data User
+                  </p>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ route('activities.index') }}" class="nav-link @if(request()->is('activities')) active @endif">
+                  <i class="nav-icon fas fa-eye"></i>
+                  <p>
+                    Log Aktivity
                   </p>
                 </a>
             </li>

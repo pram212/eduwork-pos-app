@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Activity;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class HomeController extends Controller
 {
@@ -23,6 +25,11 @@ class HomeController extends Controller
      */
     public function index()
     {
+        Activity::create([
+            'user_id' =>  Auth::id(),
+            'activity' => "Melihat Dashboard Grafik",
+        ]);
+
         return view('home');
     }
 }

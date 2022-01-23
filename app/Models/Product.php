@@ -8,8 +8,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Product extends Model
 {
-    use HasFactory;
-    use SoftDeletes;
+    use HasFactory, SoftDeletes;
 
     protected $guarded = [];
 
@@ -23,8 +22,8 @@ class Product extends Model
         return $this->belongsTo(Warehouse::class)->withTrashed();
     }
 
-    public function transactions()
+    public function sales()
     {
-        return $this->belongsToMany(Transaction::class)->withPivot('quantity')->withTrashed();
+        return $this->belongsToMany(Sale::class)->withPivot('quantity')->withTrashed();
     }
 }

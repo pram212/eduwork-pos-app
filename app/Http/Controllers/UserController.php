@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Activity;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
@@ -15,7 +17,7 @@ class UserController extends Controller
      */
     public function index()
     {
-        return view('users');
+        return view('users.users');
     }
 
     /**
@@ -52,6 +54,11 @@ class UserController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
+        Activity::create([
+            'user_id' =>  Auth::id(),
+            'activity' => "Menambahkan User Baru (" . $user->name. ")",
+        ]);
+
         return $user;
     }
 
@@ -74,7 +81,7 @@ class UserController extends Controller
      */
     public function edit(User $user)
     {
-        //
+        return view('users.edit', compact('user'));
     }
 
     /**
@@ -86,7 +93,26 @@ class UserController extends Controller
      */
     public function update(Request $request, User $user)
     {
-        //
+        $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:255'],
+            'phone' => ['required',],
+            'address' => ['required'],
+        ]);
+
+        $user->update([
+            'name' => $request->name,
+            'email' => $request->email,
+            'phone' => $request->phone,
+            'address' => $request->address,
+        ]);
+
+        Activity::create([
+            'user_id' =>  Auth::id(),
+            'activity' => "Mengubah User (" . $user->name. ")",
+        ]);
+
+        return redirect()->back()->with('success', 'Profil Anda Berhasil Diperbarui!');
     }
 
     /**
@@ -97,6 +123,28 @@ class UserController extends Controller
      */
     public function destroy(User $user)
     {
-        //
+        Activity::create([
+            'user_id' =>  Auth::id(),
+            'activity' => "Menghapus User (" . $user->name. ")",
+        ]);
+
+        $user->delete();
+
+        return response()->json($user);
+    }
+
+    public function resetPassword(Request $request)
+    {
+        $request->validate([
+            'password' => ['required', 'string', 'min:6', 'confirmed'],
+        ]);
+
+        $user = $request->user();
+
+        $user->update([
+            'password' => $request->password,
+        ]);
+
+        return redirect()->back()->with('success', 'Password Anda Berhasil Diperbaharui');
     }
 }

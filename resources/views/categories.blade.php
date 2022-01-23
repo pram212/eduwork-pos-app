@@ -111,7 +111,6 @@
                             _this.datas = _this.table.ajax.json().data;
                         });
                 },
-
                 store() {
                     this.data = {};
                     this.method = false;

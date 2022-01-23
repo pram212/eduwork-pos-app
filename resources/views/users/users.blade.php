@@ -7,7 +7,7 @@
 @section('content')
     <div class="row mb-2">
         <div class="col-sm-2">
-            <a href="#" v-on:click="store()" class="btn btn-primary">Tambah Karyawan</a>
+            <a href="#" @click="create()" class="btn btn-primary">Tambah Karyawan</a>
         </div>
     </div>
     <hr>
@@ -15,6 +15,7 @@
     <table class="table table-bordered table-sm text-center" id="table">
         <thead class="bg-dark">
             <th>No</th>
+            <th>Registrasi</th>
             <th>Nama</th>
             <th>Email</th>
             <th>Telepon</th>
@@ -27,9 +28,8 @@
     {{-- modal box --}}
     <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
-            <form :action="action" method="POST" v-on:submit="submitForm( $event, data.id )">
+            <form :action="action" method="POST" @submit.prevent="store($event)">
                 @csrf
-                <input type="hidden" name="_method" value="PUT" v-if="method">
                 <div class="modal-content">
                     <div class="modal-header bg-primary">
                         <h5 class="modal-title text-center" id="exampleModalLabel"></h5>
@@ -45,19 +45,19 @@
                             <div class="card-body row">
                                 <div class="col-4">
                                     <label for="name" class="form-label">Nama</label>
-                                    <input type="text" name="name" id="name" class="form-control" :value="data.name">
+                                    <input type="text" name="name" id="name" class="form-control">
                                 </div>
                                 <div class="col-4">
                                     <label for="email" class="form-label">Email</label>
-                                    <input type="email" class="form-control" name="email" id="email" :value="data.email">
+                                    <input type="email" class="form-control" name="email" id="email">
                                 </div>
                                 <div class="col-4">
                                     <label for="phone" class="form-label">Telepon</label>
-                                    <input type="text" name="phone" id="phone" class="form-control" :value="data.phone">
+                                    <input type="text" name="phone" id="phone" class="form-control">
                                 </div>
                                 <div class="col-12">
                                     <label for="address" class="form-label">Alamat</label>
-                                    <textarea class="form-control" name="address" id="address" rows="3">@{{data.address}}</textarea>
+                                    <textarea class="form-control" name="address" id="address" rows="3"></textarea>
                                 </div>
                             </div>
                         </div>
@@ -86,6 +86,10 @@
         </div>
     </div>
     {{-- modal box end --}}
+
+    {{-- modal box show --}}
+    @include('users.show')
+    {{-- modal box show end --}}
 @endsection
 
 @section('css')
@@ -109,6 +113,7 @@
         var api = '{{url('api/users')}}';
         var columns = [
             { data: "DT_RowIndex", name: "DT_RowIndex" },
+            { data: "created_at", name: "created_at"},
             { data: "name", name: "name" },
             { data: "email", name: "email" },
             { data: "phone", name: "phone" },
@@ -116,13 +121,14 @@
             {
                 render: function (i, row, data, meta) {
                     return `
-                    <a href="#" onclick="app.update(event, ${meta.row})" class="btn btn-info btn-sm">Edit</a>
+                    <a href="#" onclick="app.show(event, ${meta.row})" class="btn btn-info btn-sm">Lihat</a>
                     <a href="#" onclick="app.destroy(event, ${data.id})" class="btn btn-danger btn-sm">Hapus</a>
                 `;
                 }, orderable: false, searchable:false
             }
         ];
 
+        // vue js instance
         var app = new Vue({
             el: '#app',
             data: {
@@ -130,9 +136,6 @@
                 data: {},
                 action: action,
                 api: api,
-                method: false,
-                formPassword: false,
-                message: "",
             },
             mounted: function () {
                 this.datatable();
@@ -152,56 +155,24 @@
                             _this.datas = _this.table.ajax.json().data;
                         });
                 },
-                store() {
+                create() {
                     this.data = {};
                     this.method = false;
                     this.formPassword = true;
                     $("#exampleModal").modal();
                     $(".modal-title").text("Tambah Karyawan");
                 },
-                update(event, id) {
-                    this.formPassword = false;
-                    this.data = this.datas[id];
-                    console.log(this.data)
-                    this.method = true;
-                    $(".modal-title").text("Edit Karyawan");
-                    $("#exampleModal").modal();
-                },
-                destroy(event, id) {
-                    Swal.fire({
-                        title: 'Are you sure?',
-                        text: "You won't be able to revert this!",
-                        icon: 'warning',
-                        showCancelButton: true,
-                        confirmButtonColor: '#3085d6',
-                        cancelButtonColor: '#d33',
-                        confirmButtonText: 'Yes, delete it!'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            axios.delete(action + '/' + id);
-                            Swal.fire(
-                                'Deleted!',
-                                'Your file has been deleted.',
-                                'success'
-                            )
-                            this.table.ajax.reload();
-                        }
-                    });
-                },
-                submitForm(event, id) {
-                    event.preventDefault();
-                    const _this = this;
-                    var action = !this.method ? this.action : this.action + "/" + id;
-                    this.message = !this.method
-                        ? "Karyawan Berhasil ditambahkan"
-                        : "Karyawan berhasil diubah";
+                store(event) {
                     axios
                         .post(action, new FormData($(event.target)[0]))
                         .then((response) => {
                             $("#exampleModal").modal("hide");
-                            _this.table.ajax.reload();
-                            Swal.fire(this.message);
-                            this.action = action;
+                            Swal.fire({
+                                title: 'Mantap',
+                                icon: 'success',
+                                text: 'Pengguna Baru Berhasil Ditambahkan!'
+                            });
+                            this.table.ajax.reload();
                         })
                         .catch(function (error) {
                             console.log(error)
@@ -224,6 +195,33 @@
                             }
                         });
                 },
+                show(e, id) {
+                    $("#showModal").modal();
+                    this.data = this.datas[id];
+                    console.log(this.data)
+                },
+                destroy(event, id) {
+                    Swal.fire({
+                        title: 'Are you sure?',
+                        text: "You won't be able to revert this!",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Yes, delete it!'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            axios.delete(action + '/' + id);
+                            Swal.fire(
+                                'Deleted!',
+                                'Your data has been deleted.',
+                                'success'
+                            )
+                            this.table.ajax.reload();
+                        }
+                    });
+                },
+
             },
         })
     </script>

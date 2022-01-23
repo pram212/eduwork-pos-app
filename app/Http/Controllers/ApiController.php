@@ -61,7 +61,12 @@ class ApiController extends Controller
     public function getUsers()
     {
         $users = User::orderByDesc('id');
-        $datatable = DataTables::of($users)->addIndexColumn()->make(true);
+        $datatable = DataTables::of($users)
+                ->editColumn('created_at', function($users) {
+                    return formatTanggal($users->created_at);
+                })
+                ->addIndexColumn()
+                ->make(true);
         return $datatable;
     }
 
