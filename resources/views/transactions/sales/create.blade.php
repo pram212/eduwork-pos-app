@@ -8,7 +8,7 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form :action="action" method="POST" @submit.stop.prevent="store($event)">
+                <form :action="action" method="POST" @submit.prevent="store()">
                 @csrf
                 <div class="row">
                     <div class="col-7 card">
@@ -30,6 +30,7 @@
                                    <th>Kode</th>
                                    <th>Nama</th>
                                    <th>Harga</th>
+                                   <th>Stok</th>
                                    <th>Jumlah</th>
                                    <th>Total</th>
                                    <th>Aksi</th>
@@ -45,6 +46,9 @@
                                         </td>
                                         <td>
                                             <input type="text" class="form-control form-control-sm" id="harga" :value="order.price" readonly>
+                                        </td>
+                                        <td>
+                                            <input type="text" class="form-control form-control-sm" id="stock" :value="order.stock" readonly>
                                         </td>
                                         <td>
                                             <input type="number" name="quantity[]" v-model="order.quantity" class="form-control form-control-sm" id="quantity" @keyup="hitungTotal($event, index)">

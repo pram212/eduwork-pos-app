@@ -8,7 +8,7 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form :action="action" method="POST" @submit.prevent="update($event, data.id)">
+                <form :action="action" method="POST" @submit.prevent="update(data.id)">
                 @csrf
                 <div class="row">
                     <div class="col-7 card">
@@ -30,6 +30,7 @@
                                    <th>Kode</th>
                                    <th>Nama</th>
                                    <th>Harga</th>
+                                   <th>Stok</th>
                                    <th>Jumlah</th>
                                    <th>Total</th>
                                    <th>Aksi</th>
@@ -45,6 +46,9 @@
                                         </td>
                                         <td>
                                             <input type="text" class="form-control form-control-sm" id="harga" :value="order.price" readonly>
+                                        </td>
+                                        <td>
+                                            <input type="text" class="form-control form-control-sm" id="stock" :value="order.stock" readonly>
                                         </td>
                                         <td>
                                             <input type="number" name="quantity[]" v-model="order.quantity" class="form-control form-control-sm" id="quantity" @keyup="hitungTotal($event, index)">
@@ -96,14 +100,14 @@
                         </div>
                         <div class="card-footer">
                             <button type="button" class="btn btn-secondary" v-if="print" data-dismiss="modal">Print</button>
-                            <button type="submit" class="btn btn-primary">Bayar</button>
+                            <button type="submit" class="btn btn-primary">Ubah</button>
                         </div>
                     </div>
                 </form>
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
             </div>
         </div>
     </div>

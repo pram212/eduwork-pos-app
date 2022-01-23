@@ -3,8 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Sale;
-use App\Http\Requests\StoreSaleRequest;
-use App\Http\Requests\UpdateSaleRequest;
 use App\Models\Product;
 use Illuminate\Http\Request;
 
@@ -56,8 +54,13 @@ class SaleController extends Controller
         $sale->payment = $request->pembayaran;
         $sale->code = "SO" . date('ymdhis');
         $sale->save();
-
         $sale->products()->sync($products);
+
+        foreach ($request->produk as $key => $value) {
+            $products = Product::find($value);
+            $products->stock -= $request->quantity[$key];
+            $products->save();
+        }
 
         return response("Penjualan Berhasil Disimpan");
     }
@@ -70,7 +73,7 @@ class SaleController extends Controller
      */
     public function show(Sale $sale)
     {
-        //
+
     }
 
     /**
@@ -91,9 +94,28 @@ class SaleController extends Controller
      * @param  \App\Models\Sale  $sale
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateSaleRequest $request, Sale $sale)
+    public function update(Request $request, Sale $sale)
     {
-        //
+        $request->validate([
+            'total' => ['required'],
+            'pembayaran' => ['required'],
+            'produk' => ['required'],
+            'quantity' => ['required']
+        ]);
+
+        $products = [];
+        foreach ($request->produk as $key => $value) {
+            $products[$value] = ["quantity" => $request->quantity[$key] ];
+        }
+
+        $sale->total_price = $request->total;
+        $sale->payment = $request->pembayaran;
+        $sale->code = "SO" . date('ymdhis');
+        $sale->save();
+        $sale->products()->sync($products);
+        $sale->refresh();
+
+        return response("Penjualan Berhasil Diubah");
     }
 
     /**
@@ -104,7 +126,10 @@ class SaleController extends Controller
      */
     public function destroy(Sale $sale)
     {
-        //
+        $sale->products()->detach();
+        $sale->delete();
+
+        return response("Penjualan berhasil dihapus");
     }
 
     public function getSale($id)

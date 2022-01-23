@@ -77,7 +77,8 @@
                 api,
                 grandTotal: 0,
                 pembayaran: 0,
-                print: false
+                print: false,
+                requestMethod: false
             },
             mounted: function () {
                 this.datatable();
@@ -96,112 +97,161 @@
                             columns,
                         })
                         .on("xhr", function () {
-                            _this.datas = _this.table.ajax.json().data; // isi variable data dengan data dari datatable ajax
+                            // isi variable data dengan data dari datatable ajax
+                            _this.datas = _this.table.ajax.json().data;
                         });
                 },
+                // method menampilkan form create
                 create() {
-                    this.data = {}; // kosongkan variable data
-                    $("#createModal").modal(); // tampilkan modal
-                    this.orders = []
-                    this.grandTotal = 0
+                    $("#createModal").modal();
+                    const _this = this;
+                    _this.data = {};
+                    _this.orders = []
+                    _this.grandTotal = 0
+                    _this.pembayaran = 0
                 },
-                store(e) {
+                // method menampilkan form edit
+                edit(event, id) {
+                    // tambilkan modal box edit
+                    $("#editModal").modal();
+                    const _this = this;
+                    // kosongkan data
+                    _this.data = {};
+                    // kosongkan orders
+                    _this.orders = [];
+                    // url untuk mengambil data penjualan berdasarkan id dengan ajax
+                    const url = '{!! url('get/sale')  !!}' + '/' + id
+                    // ambil data dengan ajax
+                    axios.get(url)
+                        .then(function (response) {
+                            // isi data dengan response
+                            _this.data = response.data;
+                            // ambil data products
+                            const oldOrders = _this.data.products;
+                            // lakukan pengulangan terhadap products
+                            for (let i = 0; i < oldOrders.length; i++) {
+                                const old = oldOrders[i];
+                                // isi orders dengan data products
+                                _this.orders.push({
+                                    product_id : old.id,
+                                    code: old.code,
+                                    name: old.name,
+                                    price: old.price,
+                                    stock: old.stock,
+                                    quantity: old.pivot.quantity,
+                                    total: old.price * old.pivot.quantity
+                                });
+                            }
+                            // isi pembayaran dengan payment dari data
+                            _this.pembayaran = _this.data.payment
+                            // hitung ulang harga total
+                            _this.hitungGrandTotal();
+                        })
+                        .catch(function (error) {
+                            console.log(error);
+                        });
+                },
+                // method menyimpan penjualan baru
+                store() {
                     const _this = this
+                    // untuk mengisi request product_id
                     const produk = [];
+                    // untuk mengisi pivot quantity
                     const quantity = [];
+                    // orders otomatis terisi
                     for (let i = 0; i < this.orders.length; i++) {
                         const order = this.orders[i];
+                        // tambahkan data berupa id produk ke array produk
                         produk.push(order.product_id)
+                        // tambahkan data berupa quantity ke array quantity
                         quantity.push(parseInt(order.quantity))
                     }
+                    // buat data yang akan dikirim ke controller
                     const data = {
-                        total: this.grandTotal,
-                        pembayaran: this.pembayaran,
+                        total: _this.grandTotal,
+                        pembayaran: _this.pembayaran,
                         produk: produk,
                         quantity: quantity
                     }
+                    // jika pembayaran kurang dari harga total
                     if (data.pembayaran < data.total) {
+                        // cegah dengan menampilkan alert
                         Swal.fire({
                             title: "OOps",
                             icon: "error",
                             text: "Pembayaran harus lebih atau sama dengan total harga"
                         })
+                    // jika pembayaran sama atau lebih dari harga total
                     } else {
+                        // insert data dengan ajax
                         axios
                             .post( action, data )
+                            // jika berhasil
                             .then(function (response) {
-                                console.log(response);
+                                // tampilkan sweetalert
                                 Swal.fire({
                                     title: "Mantap",
                                     icon: "success",
                                     text: response.data
                                 })
-                                // $("#createModal").modal("hide");
+                                // sembunyikan modal box create
+                                $("#createModal").modal("hide");
+                                // reload kembali table
                                 _this.table.ajax.reload();
-                                _this.print = true
                             })
                             .catch(function (error) {
                                 console.log(error);
                             });
                     }
-
                 },
-                edit(event, id) {
-                    const _this = this;
-                    $("#editModal").modal();
-                    _this.orders = [];
-                    _this.data = _this.datas[id]
-                    console.log(_this.data.id)
-                    var oldOrders = _this.data.products;
-                    for (let i = 0; i < oldOrders.length; i++) {
-                        const old = oldOrders[i];
-                        _this.orders.push({
-                            product_id : old.id,
-                            code: old.code,
-                            name: old.name,
-                            price: old.price,
-                            quantity: old.pivot.quantity,
-                            total: old.price * 1
-                        });
-                    }
-                    _this.pembayaran = _this.data.payment
-                    _this.hitungGrandTotal();
-                },
-                update(e, id) {
-                    console.log(id)
+                // method untuk mengubah data penjualan
+                update(id) {
                     const _this = this
+                    // untuk mengisi request product_id
                     const produk = [];
+                    // untuk mengisi pivot quantity
                     const quantity = [];
+                    // orders otomatis terisi sesuai dengan method edit atau create
                     for (let i = 0; i < this.orders.length; i++) {
                         const order = this.orders[i];
+                        // tambahkan data berupa id produk ke array produk
                         produk.push(order.product_id)
+                        // tambahkan data berupa quantity ke array quantity
                         quantity.push(parseInt(order.quantity))
                     }
+                    // buat data yang akan dikirim ke controller
                     const data = {
-                        total: this.grandTotal,
-                        pembayaran: this.pembayaran,
+                        total: _this.grandTotal,
+                        pembayaran: _this.pembayaran,
                         produk: produk,
                         quantity: quantity
                     }
+                    // jika pembayaran kurang dari harga total
                     if (data.pembayaran < data.total) {
+                        // cegah dengan menampilkan alert
                         Swal.fire({
                             title: "OOps",
                             icon: "error",
                             text: "Pembayaran harus lebih atau sama dengan total harga"
                         })
+                    // jika pembayaran sama atau lebih dari harga total
                     } else {
+                        // insert data dengan ajax
+                        var url = action + '/' + id;
                         axios
-                            .put( action + id, data )
+                            .put( url, data )
+                            // jika berhasil
                             .then(function (response) {
-                                console.log(response);
+                                // tampilkan sweetalert
                                 Swal.fire({
                                     title: "Mantap",
                                     icon: "success",
                                     text: response.data
                                 })
-                                // $("#createModal").modal("hide");
+                                // sembunyikan modal box create
+                                $("#editModal").modal("hide");
+                                // reload kembali table
                                 _this.table.ajax.reload();
-                                _this.print = true
                             })
                             .catch(function (error) {
                                 console.log(error);
@@ -230,13 +280,14 @@
                     });
                 },
                 tambahOrder(e) {
-                    const id = e.target.value;
+                    const id = e.target.value -1;
                     const produk = daftarProduk[id]
                     this.orders.push({
                         product_id : produk.id,
                         code: produk.code,
                         name: produk.name,
                         price: produk.price,
+                        stock: produk.stock,
                         quantity: 1,
                         total: produk.price * 1
                     });

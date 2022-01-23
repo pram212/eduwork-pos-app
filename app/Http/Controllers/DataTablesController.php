@@ -34,7 +34,7 @@ class DataTablesController extends Controller
             })
             ->addColumn('action', function($sales) {
                 $editBtn = '<a href="#" onclick="app.edit(event, '. $sales->id .')" class="btn btn-xs btn-info" id="editSale">Edit</a>';
-                $delBtn = '<a href="#" class="btn btn-xs btn-danger mx-2" id="hapusSale">Hapus</a>';
+                $delBtn = '<a href="#" onclick="app.delete(event, '. $sales->id .')" class="btn btn-xs btn-danger mx-2" id="hapusSale">Hapus</a>';
                 $action = $editBtn .= $delBtn;
                 return $action;
             })
