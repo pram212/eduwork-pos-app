@@ -56,9 +56,9 @@ class DataTablesController extends Controller
                 return $purchases->supplier->company_name;
             })
             ->addColumn('action', function($purchases) {
-                $editBtn = '<a href="#" class="btn btn-xs btn-info" id="editSale">Edit</a>';
-                $delBtn = '<a href="#" onclick="app.delete(event, '. $purchases->id .')" class="btn btn-xs btn-danger mx-2" id="hapusSale">Hapus</a>';
-                $action = $editBtn .= $delBtn;
+                $bayarBtn = '<a href="#" onclick="app.formBayar(event, '. $purchases->id . ')" class="btn btn-xs btn-success me-2">Bayar</a>';
+                $delBtn = '<a href="#" onclick="app.delete(event, '. $purchases->id .')" class="btn btn-xs btn-danger" id="hapusSale">Hapus</a>';
+                $action = $bayarBtn . $delBtn;
                 return $action;
             })
             ->rawColumns(['action'])

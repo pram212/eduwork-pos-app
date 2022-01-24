@@ -6,8 +6,16 @@
 @section('sub-breadcrumb', 'Data Pembelian')
 @section('content')
     <div class="row">
-        <div class="col-sm-2">
-            <a href="#" @click="create()" class="btn btn-primary btn-sm">Buka Kasir</a>
+        <div class="col-6">
+            <a href="#" @click="create()" class="btn btn-primary btn-sm">Pembelian Baru</a>
+        </div>
+        <div class="col-6">
+            <label for="">Filter</label>
+            <select class="form-control form-control-sm" name="" id="">
+                <option>Kemarin</option>
+                <option>Hari Ini</option>
+                <option>Bulan ini</option>
+            </select>
         </div>
     </div>
     <hr>
@@ -17,23 +25,21 @@
             <th>No</th>
             <th>Kode</th>
             <th>Tanggal</th>
+            <th>Jatuh Tempo</th>
             <th>Status Bayar</th>
             <th>Status Penerimaan</th>
-            <th>Harga Barang</th>
-            <th>Biaya Kirim</th>
             <th>Total Tagihan</th>
-            <th>Supplier</th>
-            <th>Jatuh Tempo</th>
-            <th width="10%">Opsi</th>
+            <th>Pembayaran</th>
+            <th>Opsi</th>
         </thead>
     </table>
     {{-- data content end --}}
 
 
     {{-- create form --}}
-    {{-- @include('transactions.sales.create') --}}
+    @include('transactions.purchases.create')
 
-    {{-- edit form --}}
+    @include('transactions.purchases.payment')
     {{-- @include('transactions.sales.edit') --}}
 
 @endsection
@@ -60,20 +66,18 @@
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
-        var action = '{{url('sales')}}';
+        var action = '{{url('purchases')}}';
         var api = '{{url('datatable/purchases')}}';
-        var daftarProduk = JSON.parse('{!! $products !!}')
+        var daftarProduk = JSON.parse('{!! $products !!}');
         var columns = [
             { data: "id", name: "id" },
             { data: "code", name: "code"},
             { data: "created_at", name: "created_at"},
+            { data: "payment_deadline", name: "payment_deadline"},
             { data: "payment_status", name: "payment_status"},
             { data: "acceptance_status", name: "acceptance_status"},
-            { data: "product_price", name: "product_price"},
-            { data: "shipping_cost", name: "shipping_cost"},
             { data: "grand_total", name: "grand_total"},
-            { data: "supplier", name: "supplier"},
-            { data: "payment_deadline", name: "payment_deadline"},
+            { data: "payment", name: "payment"},
             { data: "action", name: "action", orderable: false, searchable:false}
         ];
 
@@ -86,14 +90,17 @@
                 action,
                 api,
                 grandTotal: 0,
+                ongkir: 0,
+                tagihan: 0,
+                supplier: 0,
+                deadline: '',
                 pembayaran: 0,
-                print: false,
-                requestMethod: false
             },
             mounted: function () {
                 this.datatable();
-                $('.select2').select2({ theme: 'bootstrap4', dropdownParent: $('#createModal') })
-                $('.select3').select2({ theme: 'bootstrap4', dropdownParent: $('#editModal') })
+                $('.select2').select2({ theme: 'bootstrap4', dropdownParent: $('#createModal') });
+                $('.select3').select2({ theme: 'bootstrap4', dropdownParent: $('#editModal') });
+                this.tahigan = parseInt(this.grandTotal) + parseInt(this.ongkir);
             },
             methods: {
                 datatable() {
@@ -120,49 +127,8 @@
                     _this.grandTotal = 0
                     _this.pembayaran = 0
                 },
-                // method menampilkan form edit
-                edit(event, id) {
-                    // tambilkan modal box edit
-                    $("#editModal").modal();
-                    const _this = this;
-                    // kosongkan data
-                    _this.data = {};
-                    // kosongkan orders
-                    _this.orders = [];
-                    // url untuk mengambil data penjualan berdasarkan id dengan ajax
-                    const url = '{!! url('get/sale')  !!}' + '/' + id
-                    // ambil data dengan ajax
-                    axios.get(url)
-                        .then(function (response) {
-                            // isi data dengan response
-                            _this.data = response.data;
-                            // ambil data products
-                            const oldOrders = _this.data.products;
-                            // lakukan pengulangan terhadap products
-                            for (let i = 0; i < oldOrders.length; i++) {
-                                const old = oldOrders[i];
-                                // isi orders dengan data products
-                                _this.orders.push({
-                                    product_id : old.id,
-                                    code: old.code,
-                                    name: old.name,
-                                    price: old.price,
-                                    stock: old.stock,
-                                    quantity: old.pivot.quantity,
-                                    total: old.price * old.pivot.quantity
-                                });
-                            }
-                            // isi pembayaran dengan payment dari data
-                            _this.pembayaran = _this.data.payment
-                            // hitung ulang harga total
-                            _this.hitungGrandTotal();
-                        })
-                        .catch(function (error) {
-                            console.log(error);
-                        });
-                },
                 // method menyimpan penjualan baru
-                store() {
+                store(){
                     const _this = this
                     // untuk mengisi request product_id
                     const produk = [];
@@ -178,95 +144,118 @@
                     }
                     // buat data yang akan dikirim ke controller
                     const data = {
-                        total: _this.grandTotal,
-                        pembayaran: _this.pembayaran,
+                        harga: _this.grandTotal,
+                        tagihan: parseInt($("#tagihan").val()),
+                        supplier: $("#supplier").val(),
+                        ongkir: _this.ongkir,
+                        deadline: _this.deadline,
                         produk: produk,
                         quantity: quantity
                     }
-                    // jika pembayaran kurang dari harga total
-                    if (data.pembayaran < data.total) {
-                        // cegah dengan menampilkan alert
-                        Swal.fire({
-                            title: "OOps",
-                            icon: "error",
-                            text: "Pembayaran harus lebih atau sama dengan total harga"
+                    axios.post( action, data )
+                        .then(function (response) {
+                            // tampilkan sweetalert
+                            const message = response.data
+                            // tampilkan notifikasi sukses
+                            _this.notifySuccess(message);
+                            // sembunyikan modal box create
+                            $("#createModal").modal("hide");
+                            // reload kembali table
+                            _this.table.ajax.reload();
                         })
-                    // jika pembayaran sama atau lebih dari harga total
-                    } else {
-                        // insert data dengan ajax
-                        axios
-                            .post( action, data )
-                            // jika berhasil
-                            .then(function (response) {
-                                // tampilkan sweetalert
-                                Swal.fire({
-                                    title: "Mantap",
-                                    icon: "success",
-                                    text: response.data
-                                })
-                                // sembunyikan modal box create
-                                $("#createModal").modal("hide");
-                                // reload kembali table
-                                _this.table.ajax.reload();
-                            })
-                            .catch(function (error) {
-                                console.log(error);
-                            });
+                        .catch(function (error) {
+                            // console.log(error)
+                            const message = error.response;
+                            // tampilkan notifikasi error
+                            _this.notifyError(message);
+                        });
+                },
+                // notify success
+                notifySuccess(message) {
+                    Swal.fire({
+                        title: "Mantap",
+                        icon: "success",
+                        text: message,
+                    });
+                },
+                // notify error
+                notifyError(message) {
+                    if (message) {
+                        var invalid = message.data.errors;
+                        var html = "";
+                        $.each( invalid, function (indexInArray, valueOfElement) {
+                                html += `<div clas='text-danger'> ${valueOfElement}</div> <br>`;
+                        });
+                        Swal.fire({
+                            title: "Gagal!",
+                            icon: "error",
+                            html: html,
+                            confirmButtonText: "Ulangi",
+                        });
                     }
                 },
-                // method untuk mengubah data penjualan
-                update(id) {
-                    const _this = this
-                    // untuk mengisi request product_id
-                    const produk = [];
-                    // untuk mengisi pivot quantity
-                    const quantity = [];
-                    // orders otomatis terisi sesuai dengan method edit atau create
-                    for (let i = 0; i < this.orders.length; i++) {
-                        const order = this.orders[i];
-                        // tambahkan data berupa id produk ke array produk
-                        produk.push(order.product_id)
-                        // tambahkan data berupa quantity ke array quantity
-                        quantity.push(parseInt(order.quantity))
-                    }
-                    // buat data yang akan dikirim ke controller
-                    const data = {
-                        total: _this.grandTotal,
-                        pembayaran: _this.pembayaran,
-                        produk: produk,
-                        quantity: quantity
-                    }
-                    // jika pembayaran kurang dari harga total
-                    if (data.pembayaran < data.total) {
-                        // cegah dengan menampilkan alert
-                        Swal.fire({
-                            title: "OOps",
-                            icon: "error",
-                            text: "Pembayaran harus lebih atau sama dengan total harga"
+                //method menampilkan form pembayaran
+                formBayar(e, id) {
+                    const _this = this;
+                    $("#formBayar").modal();
+                    _this.getPurchase(id);
+                },
+                // method menyimpan pembayaran
+                simpanPembayaran(e, id) {
+                    const _this = this;
+                    const url = '{!! url('pay/purchase') !!}' + '/' + id;
+                    const pembayaran = $("#pembayaran").val();
+                    axios.post(url, { pembayaran: pembayaran })
+                        .then(function(response) {
+                            // tampilkan sweetalert
+                            const message = response.data
+                            // tampilkan notifikasi sukses
+                            _this.notifySuccess(message);
+                            // sembunyikan modal box create
+                            $("#formBayar").modal("hide");
+                            // reload kembali table
+                            _this.table.ajax.reload();
                         })
-                    // jika pembayaran sama atau lebih dari harga total
-                    } else {
-                        // insert data dengan ajax
-                        var url = action + '/' + id;
-                        axios
-                            .put( url, data )
-                            // jika berhasil
-                            .then(function (response) {
-                                // tampilkan sweetalert
-                                Swal.fire({
-                                    title: "Mantap",
-                                    icon: "success",
-                                    text: response.data
-                                })
-                                // sembunyikan modal box create
-                                $("#editModal").modal("hide");
-                                // reload kembali table
-                                _this.table.ajax.reload();
-                            })
-                            .catch(function (error) {
-                                console.log(error);
-                            });
-                    }
+                        .catch(function (error) {
+                            // console.log(error)
+                            const message = error.response;
+                            // tampilkan notifikasi error
+                            _this.notifyError(message);
+                        });
+                },
+                // method mendapatkan data lewat api
+                getPurchase(id) {
+                    const _this = this;
+                    const url = '{!! url('get/purchase')  !!}' + '/' + id;
+                    // ambil data dengan ajax
+                    axios.get(url)
+                        .then(function (response) {
+                            console.log(response)
+                            // isi data dengan response
+                            _this.data = response.data;
+                            // ambil data products
+                            const oldOrders = _this.data.products;
+                            // lakukan pengulangan terhadap products
+                            for (let i = 0; i < oldOrders.length; i++) {
+                                const old = oldOrders[i];
+                                // isi orders dengan data products
+                                _this.orders.push({
+                                    product_id : old.id,
+                                    code: old.code,
+                                    name: old.name,
+                                    price: old.price,
+                                    quantity: old.pivot.quantity,
+                                    total: old.price * old.pivot.quantity
+                                });
+                            }
+                            // isi pembayaran dengan payment dari data
+                            _this.pembayaran = _this.data.payment
+                            // hitung ulang harga total
+                            _this.hitungGrandTotal();
+                        })
+                        .catch(function (error) {
+                            console.log(error);
+                        });
                 },
                 delete(event, id) {
                     Swal.fire({
@@ -332,8 +321,7 @@
                     this.orders[index].total = result;
                     this.hitungGrandTotal();
                 },
-
-            },
+            }
         })
     </script>
 @endpush

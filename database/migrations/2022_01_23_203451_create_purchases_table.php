@@ -23,6 +23,7 @@ class CreatePurchasesTable extends Migration
             $table->bigInteger('product_price');
             $table->bigInteger('shipping_cost')->default(0);
             $table->bigInteger('grand_total');
+            $table->bigInteger('payment')->default(0);
             $table->timestamps();
             $table->softDeletes();
         });

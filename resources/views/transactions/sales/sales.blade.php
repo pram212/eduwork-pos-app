@@ -254,7 +254,7 @@
                                 _this.table.ajax.reload();
                             })
                             .catch(function (error) {
-                                console.log(error);
+                                console.log();
                             });
                     }
                 },

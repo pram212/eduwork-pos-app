@@ -7,6 +7,7 @@ use App\Http\Requests\StorePurchaseRequest;
 use App\Http\Requests\UpdatePurchaseRequest;
 use App\Models\Product;
 use App\Models\Supplier;
+use Illuminate\Http\Request;
 
 class PurchaseController extends Controller
 {
@@ -38,9 +39,37 @@ class PurchaseController extends Controller
      * @param  \App\Http\Requests\StorePurchaseRequest  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StorePurchaseRequest $request)
+    public function store(Request $request)
     {
-        //
+        $request->validate([
+            'supplier' => 'required',
+            'tagihan' => 'required|numeric',
+            'deadline' => 'required|date',
+            'harga' => 'required|numeric',
+            'produk' => 'required',
+            'quantity' => 'required'
+        ]);
+
+        $products = [];
+        foreach ($request->produk as $key => $value) {
+            $products[$value] = ["quantity" => $request->quantity[$key] ];
+        }
+
+        $purchase = new Purchase();
+        $purchase->code = "PO". date('dmYHis');
+        $purchase->payment_status = "belum lunas";
+        $purchase->acceptance_status = "belum diterima";
+        $purchase->payment_deadline = $request->deadline;
+        $purchase->product_price = $request->harga;
+        $purchase->shipping_cost = $request->ongkir;
+        $purchase->grand_total = $request->tagihan;
+        $purchase->supplier()->associate($request->supplier);
+
+        $purchase->save();
+
+        $purchase->products()->sync($products);
+
+        return response("Pembelian Berhasil Disimpan");
     }
 
     /**
@@ -85,6 +114,28 @@ class PurchaseController extends Controller
      */
     public function destroy(Purchase $purchase)
     {
-        //
+        $purchase->products()->detach();
+        $purchase->delete();
+
+        return response("Pembelian berhasil dihapus");
+    }
+
+    public function getPurchase($id)
+    {
+        $purchase = Purchase::where('id', $id)->with('products')->first();
+        return response()->json($purchase);
+    }
+
+    public function payment(Request $request, $id)
+    {
+        $request->validate([
+            'pembayaran' => 'required'
+        ]);
+
+        $purchase = Purchase::find($id);
+        $purchase->payment = $request->pembayaran;
+        $purchase->save();
+
+        return response("Pembayaran Berhasil!");
     }
 }

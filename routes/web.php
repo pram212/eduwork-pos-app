@@ -45,6 +45,8 @@ Route::middleware('auth')->group(function(){
     Route::get('datatable/sales', [\App\Http\Controllers\DataTablesController::class, 'getSales']);
     Route::get('datatable/purchases', [\App\Http\Controllers\DataTablesController::class, 'getPurchases']);
     Route::get('get/sale/{id}', [\App\Http\Controllers\SaleController::class, 'getSale']);
+    Route::get('get/purchase/{id}', [\App\Http\Controllers\PurchaseController::class, 'getPurchase']);
+    Route::post('pay/purchase/{id}', [\App\Http\Controllers\PurchaseController::class, 'payment']);
 
 });
 
