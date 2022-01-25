@@ -15,7 +15,7 @@
                         <div class="card-header">
                             <div class="mb-3">
                               <label for="" class="form-label">Pilih Produk</label>
-                              <select class="form-control select3" onchange="app.tambahOrder(event)">
+                              <select class="form-control select3" onchange="app.tambahOrder(event)" disabled>
                                 <option value="">Pilih Produk</option>
                                 @foreach ($products as $p)
                                 <option value="{{$p->id}}">{{ $p->code }} - {{ $p->name }}</option>

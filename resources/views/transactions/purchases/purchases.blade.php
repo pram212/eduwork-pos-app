@@ -10,12 +10,7 @@
             <a href="#" @click="create()" class="btn btn-primary btn-sm">Pembelian Baru</a>
         </div>
         <div class="col-6">
-            <label for="">Filter</label>
-            <select class="form-control form-control-sm" name="" id="">
-                <option>Kemarin</option>
-                <option>Hari Ini</option>
-                <option>Bulan ini</option>
-            </select>
+
         </div>
     </div>
     <hr>
@@ -27,9 +22,9 @@
             <th>Tanggal</th>
             <th>Jatuh Tempo</th>
             <th>Status Bayar</th>
-            <th>Status Penerimaan</th>
             <th>Total Tagihan</th>
-            <th>Pembayaran</th>
+            <th>Total Bayar</th>
+            <th>Sisa Tagihan</th>
             <th>Opsi</th>
         </thead>
     </table>
@@ -38,9 +33,6 @@
 
     {{-- create form --}}
     @include('transactions.purchases.create')
-
-    @include('transactions.purchases.payment')
-    {{-- @include('transactions.sales.edit') --}}
 
 @endsection
 
@@ -75,9 +67,9 @@
             { data: "created_at", name: "created_at"},
             { data: "payment_deadline", name: "payment_deadline"},
             { data: "payment_status", name: "payment_status"},
-            { data: "acceptance_status", name: "acceptance_status"},
             { data: "grand_total", name: "grand_total"},
-            { data: "payment", name: "payment"},
+            { data: "total_amount", name: "grand_total"},
+            { data: "reminder", name: "reminder"},
             { data: "action", name: "action", orderable: false, searchable:false}
         ];
 
@@ -94,7 +86,6 @@
                 tagihan: 0,
                 supplier: 0,
                 deadline: '',
-                pembayaran: 0,
             },
             mounted: function () {
                 this.datatable();
@@ -193,35 +184,6 @@
                             confirmButtonText: "Ulangi",
                         });
                     }
-                },
-                //method menampilkan form pembayaran
-                formBayar(e, id) {
-                    const _this = this;
-                    $("#formBayar").modal();
-                    _this.getPurchase(id);
-                },
-                // method menyimpan pembayaran
-                simpanPembayaran(e, id) {
-                    const _this = this;
-                    const url = '{!! url('pay/purchase') !!}' + '/' + id;
-                    const pembayaran = $("#pembayaran").val();
-                    axios.post(url, { pembayaran: pembayaran })
-                        .then(function(response) {
-                            // tampilkan sweetalert
-                            const message = response.data
-                            // tampilkan notifikasi sukses
-                            _this.notifySuccess(message);
-                            // sembunyikan modal box create
-                            $("#formBayar").modal("hide");
-                            // reload kembali table
-                            _this.table.ajax.reload();
-                        })
-                        .catch(function (error) {
-                            // console.log(error)
-                            const message = error.response;
-                            // tampilkan notifikasi error
-                            _this.notifyError(message);
-                        });
                 },
                 // method mendapatkan data lewat api
                 getPurchase(id) {

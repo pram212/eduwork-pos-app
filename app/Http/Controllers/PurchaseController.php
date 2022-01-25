@@ -58,7 +58,6 @@ class PurchaseController extends Controller
         $purchase = new Purchase();
         $purchase->code = "PO". date('dmYHis');
         $purchase->payment_status = "belum lunas";
-        $purchase->acceptance_status = "belum diterima";
         $purchase->payment_deadline = $request->deadline;
         $purchase->product_price = $request->harga;
         $purchase->shipping_cost = $request->ongkir;
@@ -122,7 +121,7 @@ class PurchaseController extends Controller
 
     public function getPurchase($id)
     {
-        $purchase = Purchase::where('id', $id)->with('products')->first();
+        $purchase = Purchase::where('id', $id)->with('products')->withSum('payments as total_payment', 'amount')->first();
         return response()->json($purchase);
     }
 

@@ -103,8 +103,8 @@ class SaleController extends Controller
             'quantity' => ['required']
         ]);
 
+        
         $products = [];
-
         foreach ($request->produk as $key => $value) {
             $products[$value] = ["quantity" => $request->quantity[$key] ];
         }

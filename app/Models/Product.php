@@ -26,4 +26,5 @@ class Product extends Model
     {
         return $this->belongsToMany(Sale::class)->withPivot('quantity')->withTrashed();
     }
+
 }

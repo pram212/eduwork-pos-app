@@ -189,11 +189,9 @@
                             // jika berhasil
                             .then(function (response) {
                                 // tampilkan sweetalert
-                                Swal.fire({
-                                    title: "Mantap",
-                                    icon: "success",
-                                    text: response.data
-                                })
+                                const message = response.data
+                                // tampilkan notifikasi sukses
+                                _this.notifySuccess(message);
                                 // sembunyikan modal box create
                                 $("#createModal").modal("hide");
                                 // reload kembali table
@@ -201,7 +199,34 @@
                             })
                             .catch(function (error) {
                                 console.log(error);
+                                const message = error.response;
+                                 // tampilkan notifikasi error
+                                _this.notifyError(message);
                             });
+                    }
+                },
+                // notify success
+                notifySuccess(message) {
+                    Swal.fire({
+                        title: "Mantap",
+                        icon: "success",
+                        text: message,
+                    });
+                },
+                // notify error
+                notifyError(message) {
+                    if (message) {
+                        var invalid = message.data.errors;
+                        var html = "";
+                        $.each( invalid, function (indexInArray, valueOfElement) {
+                                html += `<div clas='text-danger'> ${valueOfElement}</div> <br>`;
+                        });
+                        Swal.fire({
+                            title: "Gagal!",
+                            icon: "error",
+                            html: html,
+                            confirmButtonText: "Ulangi",
+                        });
                     }
                 },
                 // method untuk mengubah data penjualan

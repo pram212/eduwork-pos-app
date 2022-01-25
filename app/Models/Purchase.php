@@ -20,4 +20,9 @@ class Purchase extends Model
     {
         return $this->belongsTo(Supplier::class)->withTrashed();
     }
+
+    public function payments()
+    {
+        return $this->hasMany(Payment::class);
+    }
 }

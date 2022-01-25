@@ -17,19 +17,17 @@ class CreatePurchasesTable extends Migration
             $table->id();
             $table->char('code')->unique();
             $table->char('payment_status');
-            $table->char('acceptance_status');
             $table->foreignId('supplier_id')->constrained();
             $table->date('payment_deadline');
             $table->bigInteger('product_price');
             $table->bigInteger('shipping_cost')->default(0);
             $table->bigInteger('grand_total');
-            $table->bigInteger('payment')->default(0);
             $table->timestamps();
             $table->softDeletes();
         });
     }
 
-    /**
+    /**`
      * Reverse the migrations.
      *
      * @return void

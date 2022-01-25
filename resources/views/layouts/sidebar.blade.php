@@ -36,10 +36,27 @@
                     <p>Penjualan</p>
                 </a>
             </li>
-            <li class="nav-item">
-                <a href="{{ route('purchases.index') }}" class="nav-link @if(request()->is('purchases')) active @endif">
-                    <i class="fas fa-shopping-cart nav-icon"></i> <p>Pembelian (PO)</p>
+            <li class="nav-item @if(request()->is('purchases') || request()->is('payments')) menu-open  @endif">
+                <a href="#" class="nav-link">
+                    <i class="nav-icon fas fa-shopping-cart"></i>
+                    <p>
+                        Pembelian<i class="right fas fa-angle-left"></i>
+                    </p>
                 </a>
+                <ul class="nav nav-treeview">
+                    <li class="nav-item">
+                    <a href="{{ route('purchases.index') }}" class="nav-link @if(request()->is('purchases')) active @endif">
+                        <i class="far fa-circle nav-icon"></i>
+                        <p>Data Pembelian</p>
+                    </a>
+                    </li>
+                    <li class="nav-item">
+                    <a href="{{ route('payments.index') }}" class="nav-link @if(request()->is('payments')) active @endif">
+                        <i class="far fa-circle nav-icon"></i>
+                        <p>Pembayaran</p>
+                    </a>
+                    </li>
+                </ul>
             </li>
             <li class="nav-header">Manajemen Produk</li>
             <li class="nav-item">
@@ -83,6 +100,24 @@
                   </p>
                 </a>
             </li>
+            <li class="nav-header">Laporan</li>
+            <li class="nav-item">
+                <a href="{{ route('reports.sales.index') }}" class="nav-link @if(request()->is('report/sales')) active @endif">
+                  <i class="nav-icon fas fa-id-card-alt"></i>
+                  <p>
+                    Penjualan
+                  </p>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link">
+                  <i class="nav-icon fas fa-eye"></i>
+                  <p>
+                    Pembelian
+                  </p>
+                </a>
+            </li>
+            <li class="nav-header"></li>
         </ul>
       </nav>
       <!-- /.sidebar-menu -->
