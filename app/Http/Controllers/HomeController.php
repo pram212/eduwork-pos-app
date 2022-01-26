@@ -32,23 +32,31 @@ class HomeController extends Controller
             'activity' => "Melihat Dashboard Grafik",
         ]);
 
-        // calculating widget data
-        # datas
+        $total_product = Product::count();
+        $pemasukan = $this->widgetIncome();
+        $pengeluaran = $this->widgetCost();
+        // chart declare
+        $dataPies = $this->pieChart();
+        $dataBars = $this->barChart();
+        $dataDoughnuts = $this->doughnutChart();
+        // compact
+        return view('home', compact('pemasukan', 'pengeluaran','total_product', 'dataBars', 'dataPies', 'dataDoughnuts'));
+    }
+
+    public function widgetIncome()
+    {
         $now = date("m");
         $sales = Sale::whereMonth('created_at', $now)->get();
-        $paymentPurchases = Payment::whereMonth('created_at', $now)->get();
-         # render
         $pemasukan = $sales->sum('total_price');
+        return $pemasukan;
+    }
+
+    public function widgetCost()
+    {
+        $now = date("m");
+        $paymentPurchases = Payment::whereMonth('created_at', $now)->get();
         $pengeluaran = $paymentPurchases->sum('amount');
-        $total_product = Product::count();
-
-        $dataPies = $this->pieChart();
-
-        $dataBars = $this->barChart();
-
-        $dataDoughnuts = $this->doughnutChart();
-
-        return view('home', compact('pemasukan', 'pengeluaran','total_product', 'dataBars', 'dataPies', 'dataDoughnuts'));
+        return $pengeluaran;
     }
 
     public function barChart()
