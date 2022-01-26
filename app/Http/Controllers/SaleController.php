@@ -45,8 +45,6 @@ class SaleController extends Controller
             'quantity' => ['required']
         ]);
 
-        dd($request->all());
-
         $products = [];
         foreach ($request->produk as $key => $value) {
             $products[$value] = ["quantity" => $request->quantity[$key] ];
@@ -64,8 +62,7 @@ class SaleController extends Controller
             $products->stock -= $request->quantity[$key];
             $products->save();
         }
-
-        return view('transactions.sales.nota-kontan', compact($sale));
+        return view('transactions.sales.nota-kontan', compact('sale'))->with('success', 'Penjualan Berhasil disimpan');
     }
 
     /**

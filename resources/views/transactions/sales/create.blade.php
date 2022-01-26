@@ -6,6 +6,15 @@
 @section('sub-breadcrumb', 'Kasir')
 
 @section('content')
+@if ($errors->any())
+    <div class="alert alert-danger">
+        <ul>
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
 <div class="card">
     <div class="card-header">
         <h4 class="card-title">Penjualan Baru</h4>
@@ -67,7 +76,7 @@
                                <tr>
                                    <th colspan="4" class="text-right">Subtotal</th>
                                    <td colspan="2">
-                                       <input type="number" class="form-control form-control-sm" :value="grandTotal" readonly>
+                                       <input type="number" class="form-control form-control-sm" name="total" :value="grandTotal" readonly>
                                    </td>
                                </tr>
                            </tfoot>

@@ -51,6 +51,10 @@ Route::middleware('auth')->group(function(){
     Route::get('get/purchase/{id}', [\App\Http\Controllers\PurchaseController::class, 'getPurchase']);
     Route::put('password/reset/manual', [\App\Http\Controllers\UserController::class, 'resetPassword']);
     Route::get('activities', [\App\Http\Controllers\ActivityController::class, 'index'])->name('activities.index');
+    Route::get('nota', function(){
+        $sale = Sale::find(1);
+        return view('transactions.sales.nota-kontan', compact('sale'));
+    });
 
     // report route
     Route::get('report/sales', [\App\Http\Controllers\ReportController::class, 'salesReport'])->name('reports.sales.index');
