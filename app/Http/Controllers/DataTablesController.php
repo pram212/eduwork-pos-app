@@ -11,6 +11,7 @@ use App\Models\Supplier;
 use App\Models\Purchase;
 use App\Models\Activity;
 use App\Models\Warehouse;
+use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 
 class DataTablesController extends Controller
@@ -31,9 +32,19 @@ class DataTablesController extends Controller
         return $dataTable;
     }
 
-    public function getSales()
+    public function getSales(Request $request)
     {
-        $sales = Sale::with('products')->select('sales.*');
+        if ($request->start) {
+            $start = date("Y-m-d", strtotime($request->start));
+            $end = date("Y-m-d", strtotime($request->end));
+            $sales = Sale::whereDate('created_at', '>=', $start )
+                            ->whereDate('created_at', '<=', $end )
+                            ->with('products')
+                            ->select('sales.*');
+        } else {
+            $sales = Sale::with('products')->select('sales.*');
+        }
+
         $dataTable = DataTables::of($sales)
             ->editColumn('created_at', function($sales) {
                 return formatTanggal($sales->created_at);
@@ -109,11 +120,12 @@ class DataTablesController extends Controller
                     })
                     ->addColumn('action', function($transactions) {
                         $buttons = '
-                        <a href="#" onclick="app.edit(event, '. $transactions->id.')" class="btn btn-primary btn-sm"><i class="fas fa-pencil-alt"></i></a>
-                        <a href="#" onclick="app.delete(event, '. $transactions->id .')" class="btn btn-danger btn-sm"><i class="fas fa-trash-alt"></i></a>
+                        <a href="#" onclick="app.edit(event, '. $transactions->id.')" class="btn btn-primary btn-xs">Edit</a>
+                        <a href="#" onclick="app.delete(event, '. $transactions->id .')" class="btn btn-danger btn-xs">Hapus</a>
                         ';
                         return $buttons;
                     })
+                    ->rawColumns(['action'])
                     ->addIndexColumn()
                     ->make(true);
 
@@ -122,31 +134,72 @@ class DataTablesController extends Controller
 
     public function getCategories()
     {
-        $categories = Category::orderByDesc('id');
-        $datatable = Datatables::of($categories)->addIndexColumn()->make(true);
+        $categories = Category::all();
+
+        $datatable = Datatables::of($categories)
+            ->addColumn('action', function($categories) {
+                $buttons = '
+                <a href="#" onclick="app.update(event, '. $categories->id.')" class="btn btn-primary btn-xs">Edit</a>
+                <a href="#" onclick="app.destroy(event, '. $categories->id .')" class="btn btn-danger btn-xs">Hapus</a>
+                ';
+                return $buttons;
+            })
+            ->rawColumns(['action'])
+            ->addIndexColumn()
+            ->make(true);
+
         return $datatable;
     }
 
     public function getWarehouses()
     {
-        $warehouses = Warehouse::orderByDesc('id');
-        $datatable = DataTables::of($warehouses)->addIndexColumn()->make(true);
+        $warehouses = Warehouse::all();
+        $datatable = DataTables::of($warehouses)
+                    ->addColumn('action', function($warehouses) {
+                        $buttons = '
+                        <a href="#" onclick="app.update(event, '. $warehouses->id.')" class="btn btn-primary btn-xs">Edit</a>
+                        <a href="#" onclick="app.destroy(event, '. $warehouses->id .')" class="btn btn-danger btn-xs">Hapus</a>
+                        ';
+                        return $buttons;
+                    })
+                    ->rawColumns(['action'])
+                    ->addIndexColumn()->make(true);
+
         return $datatable;
     }
     public function getSuppliers()
     {
-        $suppliers = Supplier::orderByDesc('id');
-        $datatable = DataTables::of($suppliers)->addIndexColumn()->make(true);
+        $suppliers = Supplier::all();
+        $datatable = DataTables::of($suppliers)
+                    ->addColumn('action', function($suppliers) {
+                        $buttons = '
+                        <a href="#" onclick="app.update(event, '. $suppliers->id.')" class="btn btn-primary btn-xs">Edit</a>
+                        <a href="#" onclick="app.destroy(event, '. $suppliers->id .')" class="btn btn-danger btn-xs">Hapus</a>
+                        ';
+                        return $buttons;
+                    })
+                    ->rawColumns(['action'])
+                    ->addIndexColumn()
+                    ->make(true);
+
         return $datatable;
     }
 
     public function getUsers()
     {
-        $users = User::orderByDesc('id');
+        $users = User::all();
         $datatable = DataTables::of($users)
                 ->editColumn('created_at', function($users) {
                     return formatTanggal($users->created_at);
                 })
+                ->addColumn('action', function($users) {
+                    $buttons = '
+                    <a href="#" onclick="app.show(event, '. ($users->id - 1) .')" class="btn btn-primary btn-xs">Lihat</a>
+                    <a href="#" onclick="app.destroy(event, '. $users->id.')" class="btn btn-danger btn-xs">Hapus</a>
+                    ';
+                    return $buttons;
+                })
+                ->rawColumns(['action'])
                 ->addIndexColumn()
                 ->make(true);
         return $datatable;

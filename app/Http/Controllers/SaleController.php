@@ -15,7 +15,7 @@ class SaleController extends Controller
      */
     public function index()
     {
-        $products = Product::where('stock', '>=', 0)->get();
+        $products = Product::where('stock', '!=', 0)->get();
         return view('transactions.sales.sales', compact('products'));
     }
 
@@ -26,7 +26,8 @@ class SaleController extends Controller
      */
     public function create()
     {
-        //
+        $products = Product::where('stock', '!=', 0)->get();
+        return view('transactions.sales.create', compact('products'));
     }
 
     /**
@@ -43,6 +44,8 @@ class SaleController extends Controller
             'produk' => ['required'],
             'quantity' => ['required']
         ]);
+
+        dd($request->all());
 
         $products = [];
         foreach ($request->produk as $key => $value) {
@@ -62,7 +65,7 @@ class SaleController extends Controller
             $products->save();
         }
 
-        return response("Penjualan Berhasil Disimpan");
+        return view('transactions.sales.nota-kontan', compact($sale));
     }
 
     /**
@@ -103,7 +106,7 @@ class SaleController extends Controller
             'quantity' => ['required']
         ]);
 
-        
+
         $products = [];
         foreach ($request->produk as $key => $value) {
             $products[$value] = ["quantity" => $request->quantity[$key] ];

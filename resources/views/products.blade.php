@@ -12,7 +12,7 @@
     </div>
     <hr>
     {{-- data content --}}
-    <table class="table table-bordered table-sm text-center" id="table_id">
+    <table class="table table-bordered table-sm text-center w-100" id="table_id">
         <thead>
             <th>No</th>
             <th>Kode</th>
@@ -126,7 +126,7 @@
 
     <script>
         var action = '{{url('products')}}';
-        var api = '{{url('api/products')}}';
+        var api = '{{url('datatable/products')}}';
         var columns = [
             { data: "id", name: "id" },
             { data: "code", name: "code"},

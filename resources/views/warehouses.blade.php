@@ -12,7 +12,7 @@
     </div>
     <hr>
     {{-- data content --}}
-    <table class="table table-bordered table-sm text-center" id="table">
+    <table class="table table-bordered table-sm text-center w-100" id="table">
         <thead>
             <th>No</th>
             <th>Nama</th>
@@ -68,19 +68,11 @@
 
     <script>
         var action = '{{url('warehouses')}}';
-        var api = '{{url('api/warehouses')}}';
+        var api = '{{url('datatable/warehouses')}}';
         var columns = [
             { data: "DT_RowIndex", name: "id" },
             { data: "name", name: "name" },
-            {
-                render: function (i, row, data, meta) {
-                    return `
-                <a href="#" onclick="app.update(event, ${meta.row})" class="btn btn-info btn-sm">Edit</a>
-                <a href="#" onclick="app.destroy(event, ${data.id})" class="btn btn-danger btn-sm">Hapus</a>
-                `;
-                },
-                orderable: false, searchable:false
-            }
+            { data: "action", name: "action", orderable:false, searchable: false }
         ];
 
         var app = new Vue({
@@ -118,7 +110,7 @@
                     $(".modal-title").text("Tambah Gudang");
                 },
                 update(event, id) {
-                    this.data = this.datas[id];
+                    this.data = this.datas[id - 1];
                     console.log(this.data)
                     this.method = true;
                     $(".modal-title").text("Edit Gudang");
@@ -135,6 +127,7 @@
                         confirmButtonText: 'Yes, delete it!'
                     }).then((result) => {
                         if (result.isConfirmed) {
+                            id - 1;
                             axios.delete(action + '/' + id);
                             Swal.fire(
                                 'Deleted!',
@@ -148,17 +141,18 @@
                 submitForm(event, id) {
                     event.preventDefault();
                     const _this = this;
-                    var action = !this.method ? this.action : this.action + "/" + id;
+                    id - 1;
+                    var url = !this.method ? this.action : this.action + "/" + id;
                     this.message = !this.method
                         ? "Gudang Berhasil ditambahkan"
                         : "Gudang berhasil diubah";
                     axios
-                        .post(action, new FormData($(event.target)[0]))
+                        .post(url, new FormData($(event.target)[0]))
                         .then((response) => {
                             $("#exampleModal").modal("hide");
                             _this.table.ajax.reload();
                             Swal.fire(this.message);
-                            this.action = action;
+                            _this.action = action;
                         })
                         .catch(function (error) {
                             console.log(error)

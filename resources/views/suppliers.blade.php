@@ -12,7 +12,7 @@
     </div>
     <hr>
     {{-- data content --}}
-    <table class="table table-bordered table-sm text-center" id="table">
+    <table class="table table-bordered table-sm text-center w-100" id="table">
         <thead>
             <th>No</th>
             <th>Nama</th>
@@ -44,15 +44,15 @@
                         </div>
                         <div class="mb-3">
                           <label for="email" class="form-label">Email</label>
-                          <input type="email" class="form-control" name="email" id="email"  placeholder="Masukan email">
+                          <input type="email" class="form-control" name="email" id="email"  placeholder="Masukan email" :value="data.email">
                         </div>
                         <div class="mb-3">
                           <label for="phone" class="form-label">Telepon</label>
-                          <input type="text" name="phone" id="phone" class="form-control" placeholder="Masukan Nomor Telepon">
+                          <input type="text" name="phone" id="phone" class="form-control" placeholder="Masukan Nomor Telepon" :value="data.phone">
                         </div>
                         <div class="mb-3">
                           <label for="address" class="form-label">Alamat</label>
-                          <textarea class="form-control" name="address" id="address" rows="3"></textarea>
+                          <textarea class="form-control" name="address" id="address" rows="3">@{{data.address}}</textarea>
                         </div>
                     </div>
                     <div class="modal-footer text-center">
@@ -83,21 +83,14 @@
 
     <script>
         var action = '{{url('suppliers')}}';
-        var api = '{{url('api/suppliers')}}';
+        var api = '{{url('datatable/suppliers')}}';
         var columns = [
             { data: "DT_RowIndex", name: "DT_RowIndex" },
             { data: "company_name", name: "company_name" },
             { data: "email", name: "email" },
             { data: "phone", name: "phone" },
             { data: "address", name: "address" },
-            {
-                render: function (i, row, data, meta) {
-                    return `
-                    <a href="#" onclick="app.update(event, ${meta.row})" class="btn btn-info btn-sm">Edit</a>
-                    <a href="#" onclick="app.destroy(event, ${data.id})" class="btn btn-danger btn-sm">Hapus</a>
-                `;
-                }, orderable: false, searchable:false
-            }
+            { data: "action", name: "action", orderable:false, searchable: false }
         ];
 
         var app = new Vue({
@@ -135,7 +128,7 @@
                     $(".modal-title").text("Tambah Penyuplai");
                 },
                 update(event, id) {
-                    this.data = this.datas[id];
+                    this.data = this.datas[id - 1];
                     console.log(this.data)
                     this.method = true;
                     $(".modal-title").text("Edit Penyuplai");
@@ -152,6 +145,7 @@
                         confirmButtonText: 'Yes, delete it!'
                     }).then((result) => {
                         if (result.isConfirmed) {
+                            id - 1;
                             axios.delete(action + '/' + id);
                             Swal.fire(
                                 'Deleted!',
@@ -165,12 +159,13 @@
                 submitForm(event, id) {
                     event.preventDefault();
                     const _this = this;
-                    var action = !this.method ? this.action : this.action + "/" + id;
+                    id - 1;
+                    var url = !this.method ? this.action : this.action + "/" + id;
                     this.message = !this.method
                         ? "Penyuplai Berhasil ditambahkan"
                         : "Penyuplai berhasil diubah";
                     axios
-                        .post(action, new FormData($(event.target)[0]))
+                        .post(url, new FormData($(event.target)[0]))
                         .then((response) => {
                             $("#exampleModal").modal("hide");
                             _this.table.ajax.reload();

@@ -1,18 +1,18 @@
 @extends('layouts.app')
-@section('title', 'Karyawan')
-@section('content-title', 'Karyawan')
-@section('card-header', 'Daftar Karyawan')
-@section('breadcrumb', 'Karyawan')
-@section('sub-breadcrumb', 'Daftar Karyawan')
+@section('title', 'User')
+@section('content-title', 'User')
+@section('card-header', 'Daftar User')
+@section('breadcrumb', 'User')
+@section('sub-breadcrumb', 'Daftar User')
 @section('content')
     <div class="row mb-2">
         <div class="col-sm-2">
-            <a href="#" @click="create()" class="btn btn-primary">Tambah Karyawan</a>
+            <a href="#" @click="create()" class="btn btn-primary">Tambah User</a>
         </div>
     </div>
     <hr>
     {{-- data content --}}
-    <table class="table table-bordered table-sm text-center" id="table">
+    <table class="table table-bordered table-sm text-center w-100" id="table">
         <thead class="bg-dark">
             <th>No</th>
             <th>Registrasi</th>
@@ -61,7 +61,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="card" v-if="formPassword">
+                        <div class="card">
                             <div class="card-header bg-secondary">
                                 <h5 class="card-title">Keamanan</h5>
                             </div>
@@ -110,7 +110,7 @@
 
     <script>
         var action = '{{url('users')}}';
-        var api = '{{url('api/users')}}';
+        var api = '{{url('datatable/users')}}';
         var columns = [
             { data: "DT_RowIndex", name: "DT_RowIndex" },
             { data: "created_at", name: "created_at"},
@@ -118,14 +118,7 @@
             { data: "email", name: "email" },
             { data: "phone", name: "phone" },
             { data: "address", name: "address" },
-            {
-                render: function (i, row, data, meta) {
-                    return `
-                    <a href="#" onclick="app.show(event, ${meta.row})" class="btn btn-info btn-sm">Lihat</a>
-                    <a href="#" onclick="app.destroy(event, ${data.id})" class="btn btn-danger btn-sm">Hapus</a>
-                `;
-                }, orderable: false, searchable:false
-            }
+            { data: "action", name: "action", orderable:false, searchable: false }
         ];
 
         // vue js instance
@@ -196,9 +189,10 @@
                         });
                 },
                 show(e, id) {
+                    const _this = this;
                     $("#showModal").modal();
-                    this.data = this.datas[id];
-                    console.log(this.data)
+                    _this.data = _this.datas[id];
+                    console.log(_this.data)
                 },
                 destroy(event, id) {
                     Swal.fire({
@@ -211,6 +205,7 @@
                         confirmButtonText: 'Yes, delete it!'
                     }).then((result) => {
                         if (result.isConfirmed) {
+                            id - 1;
                             axios.delete(action + '/' + id);
                             Swal.fire(
                                 'Deleted!',

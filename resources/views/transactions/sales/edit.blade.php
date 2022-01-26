@@ -99,7 +99,6 @@
                            </div>
                         </div>
                         <div class="card-footer">
-                            <button type="button" class="btn btn-secondary" v-if="print" data-dismiss="modal">Print</button>
                             <button type="submit" class="btn btn-primary">Ubah</button>
                         </div>
                     </div>

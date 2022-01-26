@@ -56,6 +56,8 @@ Route::middleware('auth')->group(function(){
     Route::get('report/sales', [\App\Http\Controllers\ReportController::class, 'salesReport'])->name('reports.sales.index');
     Route::get('get/report/all', [\App\Http\Controllers\ReportController::class, 'getSalesAll']);
     Route::get('get/report/product', [\App\Http\Controllers\ReportController::class, 'getSalesProduct']);
+    Route::get('report/purchases', [\App\Http\Controllers\ReportController::class, 'reportPurchasePage']);
+    Route::get('report/purchases/filter', [\App\Http\Controllers\ReportController::class, 'getReportPurchases']);
 
 });
 

@@ -103,7 +103,7 @@
             <li class="nav-header">Laporan</li>
             <li class="nav-item">
                 <a href="{{ route('reports.sales.index') }}" class="nav-link @if(request()->is('report/sales')) active @endif">
-                  <i class="nav-icon fas fa-id-card-alt"></i>
+                    <i class="nav-icon fas fa-file-alt"></i>
                   <p>
                     Penjualan
                   </p>
@@ -111,7 +111,7 @@
             </li>
             <li class="nav-item">
                 <a href="#" class="nav-link">
-                  <i class="nav-icon fas fa-eye"></i>
+                    <i class="nav-icon fas fa-file-alt"></i>
                   <p>
                     Pembelian
                   </p>

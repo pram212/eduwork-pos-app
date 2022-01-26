@@ -6,8 +6,22 @@
 @section('sub-breadcrumb', 'Data Penjualan')
 @section('content')
     <div class="row">
-        <div class="col-sm-2">
-            <a href="#" @click="create()" class="btn btn-primary btn-sm">Buka Kasir</a>
+        <div class="col-6">
+            <a href="{{ route('sales.create') }}" class="btn btn-primary btn-sm">Buka Kasir</a>
+        </div>
+        <div class="col-6">
+            <!-- Date range -->
+            <div class="form-group">
+                <label>Filter Tanggal :</label>
+                <div class="input-group">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text"><i class="far fa-calendar-alt"></i></span>
+                  </div>
+                  <input type="text" class="form-control float-right" id="reservation" onchange="app.filterTanggal(event)">
+                </div>
+                <!-- /.input group -->
+            </div>
+            <!-- /.form group -->
         </div>
     </div>
     <hr>
@@ -24,10 +38,6 @@
     </table>
     {{-- data content end --}}
 
-
-    {{-- create form --}}
-    @include('transactions.sales.create')
-
     {{-- edit form --}}
     @include('transactions.sales.edit')
 
@@ -40,6 +50,12 @@
     <!-- Select2 -->
     <link rel="stylesheet" href="{{asset('adminLTE/plugins/select2/css/select2.min.css')}}">
     <link rel="stylesheet" href="{{asset('adminLTE/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css')}}">
+    <!-- daterange picker -->
+    <link rel="stylesheet" href="{{asset('adminLTe/plugins/daterangepicker/daterangepicker.css')}}">
+    <!-- Bootstrap Color Picker -->
+    <link rel="stylesheet" href="{{asset('adminLTe/plugins/bootstrap-colorpicker/css/bootstrap-colorpicker.min.css')}}">
+    <!-- Tempusdominus Bootstrap 4 -->
+    <link rel="stylesheet" href="{{asset('adminLTe/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css')}}">
 @endsection
 
 @push('script')
@@ -50,6 +66,12 @@
     <script src="{{asset('adminLTE/plugins/datatables-responsive/js/responsive.bootstrap4.min.js')}}"></script>
     <!-- Select2 -->
     <script src="{{asset('adminLTe/plugins/select2/js/select2.full.min.js')}}"></script>
+    <!-- InputMask -->
+    <script src="{{asset('adminLTe/plugins/moment/moment.min.js')}}"></script>
+    <!-- date-range-picker -->
+    <script src="{{asset('adminLTe/plugins/daterangepicker/daterangepicker.js')}}"></script>
+    <!-- Tempusdominus Bootstrap 4 -->
+    <script src="{{asset('adminLTe/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js')}}"></script>
 
     {{-- sweetalert CDN --}}
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -77,13 +99,17 @@
                 api,
                 grandTotal: 0,
                 pembayaran: 0,
-                print: false,
+                btnPrint: false,
                 requestMethod: false
             },
             mounted: function () {
+                // datatable ajax
                 this.datatable();
+                // select2
                 $('.select2').select2({ theme: 'bootstrap4', dropdownParent: $('#createModal') })
                 $('.select3').select2({ theme: 'bootstrap4', dropdownParent: $('#editModal') })
+                //Date range picker
+                $('#reservation').daterangepicker({ dateFormat: 'dd-mm-yy' })
             },
             methods: {
                 datatable() {
@@ -100,6 +126,17 @@
                             // isi variable data dengan data dari datatable ajax
                             _this.datas = _this.table.ajax.json().data;
                         });
+                },
+                // filter Tanggal tidak berfungsi
+                filterTanggal(e) {
+                    e.preventDefault();
+                    const _this = this;
+                    const daterequest = e.target.value;
+                    const dateArry = daterequest.split(" - ");
+                    const startDate = dateArry[0];
+                    const endDate = dateArry[1];
+                    const url = api + '?start=' + startDate + '&end=' + endDate
+                    _this.table.ajax.url(url + '?start=' + startDate + '&end=' + endDate).load();
                 },
                 // method menampilkan form create
                 create() {
@@ -188,12 +225,15 @@
                             .post( action, data )
                             // jika berhasil
                             .then(function (response) {
+                                console.log(response.data);
+                                _this.data = response.data;
                                 // tampilkan sweetalert
-                                const message = response.data
+                                const message = "Penjualan Berhasil Disimpan";
                                 // tampilkan notifikasi sukses
                                 _this.notifySuccess(message);
+                                _this.btnPrint = true;
                                 // sembunyikan modal box create
-                                $("#createModal").modal("hide");
+                                // $("#createModal").modal("hide");
                                 // reload kembali table
                                 _this.table.ajax.reload();
                             })
