@@ -15,7 +15,7 @@ class WarehouseController extends Controller
      */
     public function index()
     {
-        $this->authorize('view');
+        $this->authorize('lihat gudang');
 
         return view('warehouses');
 
@@ -29,7 +29,7 @@ class WarehouseController extends Controller
      */
     public function store(Request $request)
     {
-        $this->authorize('create');
+        $this->authorize('tambah gudang');
 
         $request->validate([
             'name' => 'required|string'
@@ -55,7 +55,7 @@ class WarehouseController extends Controller
      */
     public function update(Request $request, Warehouse $warehouse)
     {
-        $this->authorize('update');
+        $this->authorize('edit gudang');
 
         $request->validate([
             'name' => 'required|string'
@@ -82,7 +82,7 @@ class WarehouseController extends Controller
      */
     public function destroy(Warehouse $warehouse)
     {
-        $this->authorize('delete');
+        $this->authorize('hapus gudang');
 
         Activity::create([
             'user_id' =>  Auth::id(),
@@ -90,6 +90,7 @@ class WarehouseController extends Controller
         ]);
 
         $warehouse->delete();
+
         return response()->json($warehouse);
 
     }

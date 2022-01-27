@@ -30,7 +30,7 @@ class ActivityPolicy
      */
     public function view(User $user, Activity $activity)
     {
-        return $user->can('lihat activity');
+
     }
 
     /**

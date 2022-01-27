@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Models\Purchase;
 use App\Models\Product;
@@ -12,76 +11,69 @@ class ReportController extends Controller
 {
     public function salesReport()
     {
-        $user = Auth::user();
-        if ($user->can('lihat laporan penjualan')) {
-            $products = Product::all();
-            $lapPerProduk = Product::withSum('sales as terjual', 'product_sale.quantity')
-                        ->withSum('sales as penjualan', 'payment')
-                        ->get();
-            return view('reports.sales.index', compact('products', 'lapPerProduk'));
-        }
+        $this->authorize('lihat laporan penjualan');
 
-        return abort(403);
+        $products = Product::all();
+        $lapPerProduk = Product::withSum('sales as terjual', 'product_sale.quantity')
+                    ->withSum('sales as penjualan', 'payment')
+                    ->get();
+        return view('reports.sales.index', compact('products', 'lapPerProduk'));
+
     }
 
     public function getSalesAll(Request $request)
     {
-        $user = Auth::user();
-        if ($user->can('lihat laporan penjualan')) {
-            $request->validate([
-                'tanggal_awal' => 'required',
-                'tanggal_akhir' => 'required'
-            ]);
+        $this->authorize('lihat laporan penjualan');
 
-            $sales = Sale::whereDate('created_at', '>=', $request->tanggal_awal )
-                            ->whereDate('created_at', '<=', $request->tanggal_akhir )
-                            ->withCount('products')
-                            ->get();
+        $request->validate([
+            'tanggal_awal' => 'required',
+            'tanggal_akhir' => 'required'
+        ]);
 
-            return $sales;
-        }
-        return abort(403);
+        $sales = Sale::whereDate('created_at', '>=', $request->tanggal_awal )
+                ->whereDate('created_at', '<=', $request->tanggal_akhir )
+                ->withCount('products')
+                ->get();
+
+        return $sales;
+
     }
 
     public function getSalesProduct(Request $request)
     {
-        $user = Auth::user();
-        if ($user->can('lihat laporan penjualan')) {
-            $lapPerProduk = Product::withSum('sales as terjual', 'product_sale.quantity')
-                        ->withSum('sales as penjualan', 'payment')
-                        ->get();
+        $this->authorize('lihat laporan penjualan');
 
-            return $lapPerProduk;
-        }
-        return abort(403);
+        $lapPerProduk = Product::withSum('sales as terjual', 'product_sale.quantity')
+            ->withSum('sales as penjualan', 'payment')
+            ->get();
+
+        return $lapPerProduk;
+
     }
 
     public function reportPurchasePage(Request $request)
     {
-        $user = Auth::user();
-        if ($user->can('lihat laporan pembelian')) {
-            return view('reports.purchases.index');
-        }
-        return abort(403);
+        $this->authorize('lihat laporan pembelian');
+
+        return view('reports.purchases.index');
     }
 
     public function getReportPurchases(Request $request)
     {
-        $user = Auth::user();
-        if ($user->can('lihat laporan pembelian')) {
-            $request->validate([
-                'tanggal_awal' => 'required',
-                'tanggal_akhir' => 'required'
-            ]);
+        $this->authorize('lihat laporan pembelian');
 
-            $purchases = Purchase::whereDate('created_at', '>=', $request->tanggal_awal )
-                            ->whereDate('created_at', '<=', $request->tanggal_akhir )
-                            ->withSum('payments as paid', 'payments.amount')
-                            ->get();
+        $request->validate([
+            'tanggal_awal' => 'required',
+            'tanggal_akhir' => 'required'
+        ]);
 
-            return $purchases;
-        }
-        return abort(403);
+        $purchases = Purchase::whereDate('created_at', '>=', $request->tanggal_awal )
+                ->whereDate('created_at', '<=', $request->tanggal_akhir )
+                ->withSum('payments as paid', 'payments.amount')
+                ->get();
+
+        return $purchases;
+
     }
 
 }

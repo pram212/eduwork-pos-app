@@ -30,7 +30,7 @@ class PaymentPolicy
      */
     public function view(User $user, Payment $payment)
     {
-        return $user->can('lihat pembayaran');
+
     }
 
     /**
@@ -41,7 +41,7 @@ class PaymentPolicy
      */
     public function create(User $user)
     {
-        return $user->can('tambah pembayaran');
+
     }
 
     /**
@@ -53,7 +53,7 @@ class PaymentPolicy
      */
     public function update(User $user, Payment $payment)
     {
-        return $user->can('edit pembayaran');
+
     }
 
     /**
@@ -65,7 +65,7 @@ class PaymentPolicy
      */
     public function delete(User $user, Payment $payment)
     {
-        return $user->can('hapus pembayaran');
+
     }
 
     /**

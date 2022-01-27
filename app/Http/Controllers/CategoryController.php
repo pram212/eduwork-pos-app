@@ -17,7 +17,7 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        $this->authorize('view');
+        $this->authorize('lihat kategori');
 
         return view('categories');
     }
@@ -30,7 +30,7 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
-        $this->authorize('create');
+        $this->authorize('tambah kategori');
 
         $request->validate([
             'name' => 'required|string',
@@ -58,7 +58,7 @@ class CategoryController extends Controller
      */
     public function update(Request $request, Category $category)
     {
-        $this->authorize('update');
+        $this->authorize('edit kategori');
 
         $category->update([
             'name' => $request->name,
@@ -81,7 +81,7 @@ class CategoryController extends Controller
      */
     public function destroy(Category $category)
     {
-        $this->authorize('delete');
+        $this->authorize('hapus kategori');
 
         Activity::create([
             'user_id' =>  Auth::id(),

@@ -17,7 +17,7 @@ class PaymentController extends Controller
      */
     public function index()
     {
-        $this->authorize('view');
+        $this->authorize('lihat pembayaran');
 
         $purchases = Purchase::all();
 
@@ -31,7 +31,7 @@ class PaymentController extends Controller
      */
     public function create()
     {
-        $this->authorize('create');
+        $this->authorize('tambah pembayaran');
     }
 
     /**
@@ -42,7 +42,7 @@ class PaymentController extends Controller
      */
     public function store(Request $request)
     {
-        $this->authorize('create');
+        $this->authorize('tambah pembayaran');
 
         $request->validate([
             "kode_pembelian" => "required",
@@ -102,7 +102,7 @@ class PaymentController extends Controller
      */
     public function destroy(Payment $payment)
     {
-        $this->authorize('delete');
+        $this->authorize('hapus pembayaran');
 
         $payment->delete();
 

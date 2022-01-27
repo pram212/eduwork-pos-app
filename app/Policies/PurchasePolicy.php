@@ -2,9 +2,9 @@
 
 namespace App\Policies;
 
+use Illuminate\Auth\Access\HandlesAuthorization;
 use App\Models\Purchase;
 use App\Models\User;
-use Illuminate\Auth\Access\HandlesAuthorization;
 
 class PurchasePolicy
 {
@@ -30,7 +30,7 @@ class PurchasePolicy
      */
     public function view(User $user, Purchase $purchase)
     {
-        return $user->can('lihat pembelian');
+
     }
 
     /**
@@ -41,7 +41,7 @@ class PurchasePolicy
      */
     public function create(User $user)
     {
-        return $user->can('tambah pembelian');
+
     }
 
     /**
@@ -53,7 +53,7 @@ class PurchasePolicy
      */
     public function update(User $user, Purchase $purchase)
     {
-        return $user->can('edit pembelian');
+
     }
 
     /**
@@ -65,7 +65,7 @@ class PurchasePolicy
      */
     public function delete(User $user, Purchase $purchase)
     {
-        return $user->can('hapus pembelian');
+
     }
 
     /**

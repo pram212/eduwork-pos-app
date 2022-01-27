@@ -2,13 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-
 class ActivityController extends Controller
 {
     public function index()
     {
-        $this->authorize('view');
+        $this->authorize('lihat activity');
 
         return view('users.activities');
 

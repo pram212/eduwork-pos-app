@@ -30,7 +30,7 @@ class WarehousePolicy
      */
     public function view(User $user, Warehouse $warehouse)
     {
-        return $user->can('lihat gudang');
+
     }
 
     /**
@@ -41,7 +41,7 @@ class WarehousePolicy
      */
     public function create(User $user)
     {
-        return $user->can('tambah gudang');
+
     }
 
     /**
@@ -53,7 +53,7 @@ class WarehousePolicy
      */
     public function update(User $user, Warehouse $warehouse)
     {
-        return $user->can('edit gudang');
+
     }
 
     /**
@@ -65,7 +65,7 @@ class WarehousePolicy
      */
     public function delete(User $user, Warehouse $warehouse)
     {
-        return $user->can('hapus gudang');
+
     }
 
     /**

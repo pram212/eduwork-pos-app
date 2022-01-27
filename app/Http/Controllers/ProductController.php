@@ -19,11 +19,10 @@ class ProductController extends Controller
 
     public function index()
     {
-        $this->authorize('view');
+        $this->authorize('lihat produk');
 
         $categories = Category::all();
         $warehouses = Warehouse::all();
-
         return view('products', compact('categories', 'warehouses'));
 
     }
@@ -36,8 +35,7 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        $this->authorize('create');
-
+        $this->authorize('tambah produk');
         $request->validate([
             'code' => 'required|numeric|unique:products',
             'name' => 'required',
@@ -66,7 +64,7 @@ class ProductController extends Controller
      */
     public function update(Request $request, Product $product)
     {
-        $this->authorize('update');
+        $this->authorize('edit produk');
 
         $request->validate([
             'code' => 'required|numeric',
@@ -93,7 +91,7 @@ class ProductController extends Controller
      */
     public function destroy(Product $product)
     {
-        $this->authorize('delete');
+        $this->authorize('hapus produk');
 
         Activity::create([
             'user_id' => Auth::id(),

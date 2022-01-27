@@ -15,7 +15,7 @@ class SaleController extends Controller
      */
     public function index()
     {
-        $this->authorize('view');
+        $this->authorize('lihat penjualan');
 
         $products = Product::where('stock', '!=', 0)->get();
 
@@ -29,7 +29,7 @@ class SaleController extends Controller
      */
     public function create()
     {
-        $this->authorize('create');
+        $this->authorize('tambah penjualan');
 
         $products = Product::where('stock', '!=', 0)->get();
 
@@ -44,7 +44,7 @@ class SaleController extends Controller
      */
     public function store(Request $request)
     {
-        $this->authorize('create');
+        $this->authorize('tambah penjualan');
 
         $request->validate([
             'total' => ['required'],
@@ -104,7 +104,7 @@ class SaleController extends Controller
      */
     public function update(Request $request, Sale $sale)
     {
-        $this->authorize('update');
+        $this->authorize('edit penjualan');
 
         $request->validate([
             'total' => ['required'],
@@ -137,7 +137,7 @@ class SaleController extends Controller
      */
     public function destroy(Sale $sale)
     {
-        $this->authorize('delete');
+        $this->authorize('hapus penjualan');
 
         $sale->products()->detach();
 
@@ -148,7 +148,7 @@ class SaleController extends Controller
 
     public function getSale($id)
     {
-        $this->authorize('view');
+        $this->authorize('lihat penjualan');
 
         $sale = Sale::where('id', $id)->with('products')->first();
 

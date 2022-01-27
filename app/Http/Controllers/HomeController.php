@@ -27,6 +27,8 @@ class HomeController extends Controller
      */
     public function index()
     {
+        $this->authorize('lihat dashboard');
+
         Activity::create([
             'user_id' =>  Auth::id(),
             'activity' => "Melihat Dashboard Grafik",

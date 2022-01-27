@@ -11,7 +11,7 @@ class SupplierController extends Controller
 {
     public function index()
     {
-        $this->authorize('view');
+        $this->authorize('lihat supplier');
 
         return view('suppliers');
 
@@ -20,7 +20,7 @@ class SupplierController extends Controller
 
     public function store(Request $request)
     {
-        $this->authorize('create');
+        $this->authorize('tambah supplier');
 
         $request->validate([
             'company_name' => 'required|string',
@@ -43,7 +43,7 @@ class SupplierController extends Controller
 
     public function update(Request $request, Supplier $supplier)
     {
-        $this->authorize('update');
+        $this->authorize('edit supplier');
 
         $supplier->update([
             'company_name' => $request->company_name,
@@ -64,7 +64,7 @@ class SupplierController extends Controller
 
     public function destroy(Supplier $supplier)
     {
-        $this->authorize('delete');
+        $this->authorize('hapus supplier');
 
         Activity::create([
             'user_id' => Auth::id(),

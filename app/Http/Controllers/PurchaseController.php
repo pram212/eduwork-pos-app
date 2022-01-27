@@ -16,7 +16,7 @@ class PurchaseController extends Controller
      */
     public function index()
     {
-        $this->authorize('view');
+        $this->authorize('lihat pembelian');
 
         $products = Product::all();
 
@@ -32,7 +32,7 @@ class PurchaseController extends Controller
      */
     public function create()
     {
-        $this->authorize('create');
+        $this->authorize('tambah pembelian');
         // next...
     }
 
@@ -44,7 +44,7 @@ class PurchaseController extends Controller
      */
     public function store(Request $request)
     {
-        $this->authorize('create');
+        $this->authorize('tambah pembelian');
 
         $request->validate([
             'supplier' => 'required',
@@ -95,7 +95,7 @@ class PurchaseController extends Controller
      */
     public function edit(Purchase $purchase)
     {
-        $this->authorize('update');
+        $this->authorize('edit pembelian');
     }
 
     /**
@@ -107,7 +107,7 @@ class PurchaseController extends Controller
      */
     public function update(Request $request, Purchase $purchase)
     {
-        $this->authorize('update');
+        $this->authorize('edit pembelian');
     }
 
     /**
@@ -118,7 +118,7 @@ class PurchaseController extends Controller
      */
     public function destroy(Purchase $purchase)
     {
-        $this->authorize('delete');
+        $this->authorize('hapus pembelian');
 
         $purchase->products()->detach();
 
