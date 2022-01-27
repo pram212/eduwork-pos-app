@@ -8,6 +8,9 @@ class ActivityController extends Controller
 {
     public function index()
     {
+        $this->authorize('view');
+
         return view('users.activities');
+
     }
 }

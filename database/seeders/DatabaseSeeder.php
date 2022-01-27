@@ -22,6 +22,7 @@ class DatabaseSeeder extends Seeder
             TypeSeeder::class,
             SaleSeeder::class,
             PurchaseSeeder::class,
+            RolesAndPermissionsSeeder::class,
         ]);
     }
 }

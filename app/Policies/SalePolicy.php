@@ -30,7 +30,7 @@ class SalePolicy
      */
     public function view(User $user, Sale $sale)
     {
-        //
+        return $user->can('lihat penjualan');
     }
 
     /**
@@ -41,7 +41,7 @@ class SalePolicy
      */
     public function create(User $user)
     {
-        //
+        return $user->can('tambah penjualan');
     }
 
     /**
@@ -53,7 +53,7 @@ class SalePolicy
      */
     public function update(User $user, Sale $sale)
     {
-        //
+        return $user->can('edit penjualan');
     }
 
     /**
@@ -65,7 +65,7 @@ class SalePolicy
      */
     public function delete(User $user, Sale $sale)
     {
-        //
+        return $user->can('hapus penjualan');
     }
 
     /**

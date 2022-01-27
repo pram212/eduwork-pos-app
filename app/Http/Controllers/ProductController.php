@@ -19,9 +19,13 @@ class ProductController extends Controller
 
     public function index()
     {
+        $this->authorize('view');
+
         $categories = Category::all();
         $warehouses = Warehouse::all();
+
         return view('products', compact('categories', 'warehouses'));
+
     }
 
     /**
@@ -32,6 +36,8 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
+        $this->authorize('create');
+
         $request->validate([
             'code' => 'required|numeric|unique:products',
             'name' => 'required',
@@ -48,6 +54,7 @@ class ProductController extends Controller
         ]);
 
         return response()->json($product);
+
     }
 
     /**
@@ -59,6 +66,8 @@ class ProductController extends Controller
      */
     public function update(Request $request, Product $product)
     {
+        $this->authorize('update');
+
         $request->validate([
             'code' => 'required|numeric',
             'name' => 'required',
@@ -73,6 +82,7 @@ class ProductController extends Controller
         ]);
 
         return response()->json($product);
+
     }
 
     /**
@@ -83,6 +93,8 @@ class ProductController extends Controller
      */
     public function destroy(Product $product)
     {
+        $this->authorize('delete');
+
         Activity::create([
             'user_id' => Auth::id(),
             'activity' => "Menghapus Produk (" . $product->code . " - " . $product->name . ")",
@@ -91,5 +103,6 @@ class ProductController extends Controller
         $product->delete();
 
         return response()->json($product);
+
     }
 }

@@ -3,8 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Purchase;
-use App\Http\Requests\StorePurchaseRequest;
-use App\Http\Requests\UpdatePurchaseRequest;
 use App\Models\Product;
 use App\Models\Supplier;
 use Illuminate\Http\Request;
@@ -18,8 +16,12 @@ class PurchaseController extends Controller
      */
     public function index()
     {
+        $this->authorize('view');
+
         $products = Product::all();
+
         $suppliers = Supplier::all();
+
         return view('transactions.purchases.purchases', compact('products', 'suppliers'));
     }
 
@@ -30,7 +32,8 @@ class PurchaseController extends Controller
      */
     public function create()
     {
-        //
+        $this->authorize('create');
+        // next...
     }
 
     /**
@@ -41,6 +44,8 @@ class PurchaseController extends Controller
      */
     public function store(Request $request)
     {
+        $this->authorize('create');
+
         $request->validate([
             'supplier' => 'required',
             'tagihan' => 'required|numeric',
@@ -79,7 +84,7 @@ class PurchaseController extends Controller
      */
     public function show(Purchase $purchase)
     {
-        //
+
     }
 
     /**
@@ -90,7 +95,7 @@ class PurchaseController extends Controller
      */
     public function edit(Purchase $purchase)
     {
-        //
+        $this->authorize('update');
     }
 
     /**
@@ -100,9 +105,9 @@ class PurchaseController extends Controller
      * @param  \App\Models\Purchase  $purchase
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdatePurchaseRequest $request, Purchase $purchase)
+    public function update(Request $request, Purchase $purchase)
     {
-        //
+        $this->authorize('update');
     }
 
     /**
@@ -113,7 +118,10 @@ class PurchaseController extends Controller
      */
     public function destroy(Purchase $purchase)
     {
+        $this->authorize('delete');
+
         $purchase->products()->detach();
+
         $purchase->delete();
 
         return response("Pembelian berhasil dihapus");
@@ -122,6 +130,7 @@ class PurchaseController extends Controller
     public function getPurchase($id)
     {
         $purchase = Purchase::where('id', $id)->with('products')->withSum('payments as total_payment', 'amount')->first();
+
         return response()->json($purchase);
     }
 

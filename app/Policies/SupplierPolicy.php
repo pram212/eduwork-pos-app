@@ -30,7 +30,7 @@ class SupplierPolicy
      */
     public function view(User $user, Supplier $supplier)
     {
-        //
+        return $user->can('lihat supplier');
     }
 
     /**
@@ -41,7 +41,7 @@ class SupplierPolicy
      */
     public function create(User $user)
     {
-        //
+        return $user->can('tambah supplier');
     }
 
     /**
@@ -53,7 +53,7 @@ class SupplierPolicy
      */
     public function update(User $user, Supplier $supplier)
     {
-        //
+        return $user->can('edit supplier');
     }
 
     /**
@@ -65,7 +65,7 @@ class SupplierPolicy
      */
     public function delete(User $user, Supplier $supplier)
     {
-        //
+        return $user->can('hapus supplier');
     }
 
     /**

@@ -15,7 +15,10 @@ class SaleController extends Controller
      */
     public function index()
     {
+        $this->authorize('view');
+
         $products = Product::where('stock', '!=', 0)->get();
+
         return view('transactions.sales.sales', compact('products'));
     }
 
@@ -26,7 +29,10 @@ class SaleController extends Controller
      */
     public function create()
     {
+        $this->authorize('create');
+
         $products = Product::where('stock', '!=', 0)->get();
+
         return view('transactions.sales.create', compact('products'));
     }
 
@@ -38,6 +44,8 @@ class SaleController extends Controller
      */
     public function store(Request $request)
     {
+        $this->authorize('create');
+
         $request->validate([
             'total' => ['required'],
             'pembayaran' => ['required'],
@@ -96,6 +104,8 @@ class SaleController extends Controller
      */
     public function update(Request $request, Sale $sale)
     {
+        $this->authorize('update');
+
         $request->validate([
             'total' => ['required'],
             'pembayaran' => ['required'],
@@ -127,7 +137,10 @@ class SaleController extends Controller
      */
     public function destroy(Sale $sale)
     {
+        $this->authorize('delete');
+
         $sale->products()->detach();
+
         $sale->delete();
 
         return response("Penjualan berhasil dihapus");
@@ -135,7 +148,10 @@ class SaleController extends Controller
 
     public function getSale($id)
     {
+        $this->authorize('view');
+
         $sale = Sale::where('id', $id)->with('products')->first();
+
         return response()->json($sale);
     }
 }

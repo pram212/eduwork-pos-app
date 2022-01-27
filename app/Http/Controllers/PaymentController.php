@@ -17,7 +17,10 @@ class PaymentController extends Controller
      */
     public function index()
     {
+        $this->authorize('view');
+
         $purchases = Purchase::all();
+
         return view('transactions.purchases.payments', compact('purchases'));
     }
 
@@ -28,7 +31,7 @@ class PaymentController extends Controller
      */
     public function create()
     {
-        //
+        $this->authorize('create');
     }
 
     /**
@@ -39,14 +42,15 @@ class PaymentController extends Controller
      */
     public function store(Request $request)
     {
+        $this->authorize('create');
+
         $request->validate([
             "kode_pembelian" => "required",
             "nominal_pembayaran" => "required|numeric",
         ]);
 
-        // return response( $request->all());
-        // die;
         $payment = new Payment();
+
         $payment->create([
             "amount" => $request->nominal_pembayaran,
             "code" => "Pay" . date("YmdHis"),
@@ -98,7 +102,10 @@ class PaymentController extends Controller
      */
     public function destroy(Payment $payment)
     {
+        $this->authorize('delete');
+
         $payment->delete();
+
         return response("Pembayaran berhasil dihapus");
     }
 }

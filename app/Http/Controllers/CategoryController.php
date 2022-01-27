@@ -1,12 +1,12 @@
 <?php
 
+
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
 use App\Models\Category;
 use App\Models\Activity;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-
 
 class CategoryController extends Controller
 {
@@ -17,6 +17,8 @@ class CategoryController extends Controller
      */
     public function index()
     {
+        $this->authorize('view');
+
         return view('categories');
     }
 
@@ -28,6 +30,8 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
+        $this->authorize('create');
+
         $request->validate([
             'name' => 'required|string',
         ]);
@@ -42,6 +46,7 @@ class CategoryController extends Controller
         ]);
 
         return response()->json($category);
+
     }
 
     /**
@@ -53,6 +58,8 @@ class CategoryController extends Controller
      */
     public function update(Request $request, Category $category)
     {
+        $this->authorize('update');
+
         $category->update([
             'name' => $request->name,
         ]);
@@ -61,7 +68,9 @@ class CategoryController extends Controller
             'user_id' =>  Auth::id(),
             'activity' => "Mengubah Kategori (" . $category->name. ")",
         ]);
+
         return response()->json($category);
+
     }
 
     /**
@@ -72,6 +81,8 @@ class CategoryController extends Controller
      */
     public function destroy(Category $category)
     {
+        $this->authorize('delete');
+
         Activity::create([
             'user_id' =>  Auth::id(),
             'activity' => "Menghapus Kategori (" . $category->name. ")",
@@ -79,5 +90,6 @@ class CategoryController extends Controller
 
         $category->delete();
         return response()->json($category);
+
     }
 }
