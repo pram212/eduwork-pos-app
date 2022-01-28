@@ -2,12 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Activity;
-use App\Models\Product;
-use App\Models\Category;
-use App\Models\Warehouse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use App\Models\Warehouse;
+use App\Models\Category;
+use App\Models\Product;
 
 class ProductController extends Controller
 {
@@ -22,7 +20,9 @@ class ProductController extends Controller
         $this->authorize('lihat produk');
 
         $categories = Category::all();
+
         $warehouses = Warehouse::all();
+
         return view('products', compact('categories', 'warehouses'));
 
     }
@@ -36,6 +36,7 @@ class ProductController extends Controller
     public function store(Request $request)
     {
         $this->authorize('tambah produk');
+
         $request->validate([
             'code' => 'required|numeric|unique:products',
             'name' => 'required',
@@ -44,12 +45,10 @@ class ProductController extends Controller
         ]);
 
         $product = new Product();
+
         $product->create($request->all());
 
-        Activity::create([
-            'user_id' =>  Auth::id(),
-            'activity' => "Menambahkan Produk Baru (" . $request->code . " - " . $request->name . ")",
-        ]);
+        recordAction("Menambahkan Produk Baru (" . $request->code . " - " . $request->name . ")");
 
         return response()->json($product);
 
@@ -72,12 +71,10 @@ class ProductController extends Controller
             'price' => 'required',
             'cost' => 'required',
         ]);
-        $product->update($request->all());
 
-        Activity::create([
-            'user_id' =>  Auth::id(),
-            'activity' => "Mengubah Produk (" . $request->code . " - " . $request->name . ")",
-        ]);
+        $product->update( $request->all() );
+
+        recordAction("Mengubah Produk (" . $request->code . " - " . $request->name . ")");
 
         return response()->json($product);
 
@@ -93,10 +90,7 @@ class ProductController extends Controller
     {
         $this->authorize('hapus produk');
 
-        Activity::create([
-            'user_id' => Auth::id(),
-            'activity' => "Menghapus Produk (" . $product->code . " - " . $product->name . ")",
-        ]);
+        recordAction("Menghapus Produk (" . $product->code . " - " . $product->name . ")");
 
         $product->delete();
 

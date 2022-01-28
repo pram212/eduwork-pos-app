@@ -6,13 +6,18 @@
 @section('sub-breadcrumb', 'Daftar Produk')
 @section('content')
     <div class="row mb-2">
-        <div class="col-sm-2">
-            <a href="#" v-on:click="create()" class="btn btn-primary">Tambah Produk</a>
+        <div class="col-sm-12">
+            @can('tambah produk')
+            <div class="btn-group">
+                <button class="btn btn-sm btn-primary"><i class="fas fa-plus"></i></button>
+                <a href="#" @click.prevent="store()" class="btn btn-sm btn-primary">Produk Baru</a>
+            </div>
+            @endcan
         </div>
     </div>
     <hr>
     {{-- data content --}}
-    <table class="table table-bordered table-sm text-center w-100" id="table_id">
+    <table class="table table-bordered table-sm text-center w-100" id="table">
         <thead>
             <th>No</th>
             <th>Kode</th>
@@ -142,10 +147,10 @@
         var app = new Vue({
             el: '#app',
             data: {
-                datas: [], // variable untuk menyimpan seluruh data produk
-                data: {}, // variable untuk menyimpan satu produk untuk crud
-                action,
-                api,
+                datas: [], // objek-objek untuk datatable
+                data: {}, // sebuah objek untuk crud data
+                action: action,
+                api: api,
                 method: false, // method untuk crud data
                 message: "", // pesan dalam sweetalert
             },
@@ -155,33 +160,32 @@
             methods: {
                 datatable() {
                     const _this = this;
-                    _this.table = $("#table_id")
+                    _this.table = $("#table")
                         .DataTable({
-                            processing: true,
-                            responsive: true,
-                            serverSide: true,
-                            ajax: _this.api,
+                            ajax: {
+                                url: _this.api,
+                                type: "GET",
+                            },
                             columns,
                         })
                         .on("xhr", function () {
-                            _this.datas = _this.table.ajax.json().data; // isi variable data dengan data dari datatable ajax
+                            _this.datas = _this.table.ajax.json().data;
                         });
                 },
-                create() {
-                    this.data = {}; // kosongkan variable data
-                    this.method = false; // hilangkan element input yang namanya _method
-                    $("#exampleModal").modal(); // tampilkan modal
-                    $(".modal-title").text("Tambah Produk"); // ganti title modal
+                store() {
+                    this.data = {};
+                    this.method = false;
+                    $("#exampleModal").modal();
+                    $(".modal-title").text("Tambah Produk");
                 },
-                edit(event, id) {
-                    const productId = id - 1;
-                    this.data = this.datas[productId]; // isi variable data berdasarkan id dari parameter
-                    // console.log(this.data) testing
-                    this.method = true; // tampilkan elemen input yang namanya _method (untuk handle request method PUT)
-                    $("#exampleModal").modal(); // tampilkan modal box
-                    $(".modal-title").text("Edit Produk"); // ganti title modal
+                update(event, id) {
+                    this.data = this.datas[id - 1];
+                    console.log(this.data)
+                    this.method = true;
+                    $(".modal-title").text("Edit Produk");
+                    $("#exampleModal").modal();
                 },
-                delete(event, id) {
+                destroy(event, id) {
                     Swal.fire({
                         title: 'Are you sure?',
                         text: "You won't be able to revert this!",
@@ -205,17 +209,18 @@
                 submitForm(event, id) {
                     event.preventDefault();
                     const _this = this;
-                    var action = !this.method ? this.action : this.action + "/" + id;
+                    id -1;
+                    var url = !_this.method ? _this.action : _this.action + "/" + id
                     this.message = !this.method
                         ? "Produk Berhasil ditambahkan"
                         : "Produk berhasil diubah";
                     axios
-                        .post(action, new FormData($(event.target)[0]))
+                        .post(url, new FormData($(event.target)[0]))
                         .then((response) => {
                             $("#exampleModal").modal("hide");
                             _this.table.ajax.reload();
                             Swal.fire(this.message);
-                            console.log(this.action)
+                            _this.action = action;
                         })
                         .catch(function (error) {
                             console.log(error)
