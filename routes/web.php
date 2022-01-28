@@ -34,6 +34,7 @@ Route::middleware('auth')->group(function(){
     Route::resource('suppliers', \App\Http\Controllers\SupplierController::class);
     Route::resource('categories', \App\Http\Controllers\CategoryController::class);
     Route::resource('warehouses', \App\Http\Controllers\WarehouseController::class);
+    Route::resource('roles-permissions', \App\Http\Controllers\RolePermissionController::class);
 
     // datatable routes
     Route::get('datatable/users', [\App\Http\Controllers\DataTablesController::class, 'getUsers']);
@@ -45,16 +46,16 @@ Route::middleware('auth')->group(function(){
     Route::get('datatable/activities', [\App\Http\Controllers\DataTablesController::class, 'getActivities']);
     Route::get('datatable/categories', [\App\Http\Controllers\DataTablesController::class, 'getCategories']);
     Route::get('datatable/warehouses', [\App\Http\Controllers\DataTablesController::class, 'getWarehouses']);
+    Route::get('datatable/roles-permissions', [\App\Http\Controllers\DataTablesController::class, 'getRoles']);
 
     // additional routes
     Route::get('get/sale/{id}', [\App\Http\Controllers\SaleController::class, 'getSale']);
     Route::get('get/purchase/{id}', [\App\Http\Controllers\PurchaseController::class, 'getPurchase']);
     Route::put('password/reset/manual', [\App\Http\Controllers\UserController::class, 'resetPassword']);
     Route::get('activities', [\App\Http\Controllers\ActivityController::class, 'index'])->name('activities.index');
-    Route::get('nota', function(){
-        $sale = Sale::find(1);
-        return view('transactions.sales.nota-kontan', compact('sale'));
-    });
+    Route::get('get/permission/{id}', [\App\Http\Controllers\RolePermissionController::class, 'getPermission']);
+    Route::get('get/user/{id}', [\App\Http\Controllers\RolePermissionController::class, 'getUserRole']);
+    Route::post('roles-permissions/setup-permissions/{id}', [\App\Http\Controllers\RolePermissionController::class, 'updatePermission']);
 
     // report route
     Route::get('report/sales', [\App\Http\Controllers\ReportController::class, 'salesReport'])->name('reports.sales.index');

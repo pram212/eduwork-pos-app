@@ -13,6 +13,8 @@ use App\Models\Activity;
 use App\Models\Warehouse;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
+use Spatie\Permission\Models\Role;
+use Spatie\Permission\Models\Permission;
 
 class DataTablesController extends Controller
 {
@@ -197,7 +199,15 @@ class DataTablesController extends Controller
                     <a href="#" onclick="app.show(event, '. ($users->id - 1) .')" class="btn btn-primary btn-xs">Lihat</a>
                     <a href="#" onclick="app.destroy(event, '. $users->id.')" class="btn btn-danger btn-xs">Hapus</a>
                     ';
+
                     return $buttons;
+                })
+                ->addColumn('roles', function($users) {
+                    $roles = "";
+                    foreach ($users->roles as $role) {
+                        $roles .= $role->name;
+                    }
+                    return $roles;
                 })
                 ->rawColumns(['action'])
                 ->addIndexColumn()
@@ -209,5 +219,31 @@ class DataTablesController extends Controller
     {
         $product = Product::find($id);
         return $product->toArray();
+    }
+
+    public function getRoles()
+    {
+        $roles = Role::all();
+        $datatable = Datatables::of($roles)
+            ->addColumn('action', function($roles) {
+                $buttons = '
+                <a href="#" onclick="app.update(event, '. $roles->id.')" class="btn btn-primary btn-xs">Edit</a>
+                <a href="#" onclick="app.destroy(event, '. $roles->id .')" class="btn btn-danger btn-xs">Hapus</a>
+                <a href="#" onclick="app.editPermission(event, '. $roles->id .')" class="btn btn-success btn-xs">Permission</a>
+                ';
+                return $buttons;
+            })
+            ->addColumn('users', function($roles) {
+                $users = "";
+                foreach ($roles->users as $user) {
+                    $users .= $user->name . " ";
+                }
+                return $users;
+            })
+            ->rawColumns(['action'])
+            ->addIndexColumn()
+            ->make(true);
+
+        return $datatable;
     }
 }

@@ -19,7 +19,7 @@
             <th>Nama</th>
             <th>Email</th>
             <th>Telepon</th>
-            <th>Alamat</th>
+            <th>Role</th>
             <th>Opsi</th>
         </thead>
     </table>
@@ -117,7 +117,7 @@
             { data: "name", name: "name" },
             { data: "email", name: "email" },
             { data: "phone", name: "phone" },
-            { data: "address", name: "address" },
+            { data: "roles", name: "roles" },
             { data: "action", name: "action", orderable:false, searchable: false }
         ];
 

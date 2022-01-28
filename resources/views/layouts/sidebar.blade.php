@@ -108,7 +108,7 @@
                 </a>
             </li>
             @endcan
-            @can('lihat activity')
+            {{-- @can('lihat activity') --}}
             <li class="nav-item">
                 <a href="{{ route('activities.index') }}" class="nav-link @if(request()->is('activities')) active @endif">
                   <i class="nav-icon fas fa-eye"></i>
@@ -117,7 +117,15 @@
                   </p>
                 </a>
             </li>
-            @endcan
+            {{-- @endcan --}}
+            <li class="nav-item">
+                <a href="{{ route('roles-permissions.index') }}" class="nav-link @if(request()->is('roles-permissions')) active @endif">
+                  <i class="nav-icon fas fa-eye"></i>
+                  <p>
+                    Role Permissions
+                  </p>
+                </a>
+            </li>
             <li class="nav-header">Laporan</li>
             @can('lihat laporan penjualan')
             <li class="nav-item">
