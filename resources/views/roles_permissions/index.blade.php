@@ -9,11 +9,11 @@
         <div class="col">
             <div class="btn-group">
                 <button type="button" class="btn btn-primary btn-sm"><i class="fas fa-plus"></i></button>
-                <a href="#" v-on:click="store()" class="btn btn-primary btn-sm">Role Baru</a>
+                <a href="#" @click.prevent="store()" class="btn btn-primary btn-sm">Role Baru</a>
             </div>
             <div class="btn-group">
                 <button type="button" class="btn btn-secondary btn-sm"><i class="fas fa-cog"></i></button>
-                <a href="#" class="btn btn-secondary btn-sm">Pengaturan User</a>
+                <a href="#" @click.prevent="createAsignRole()" class="btn btn-secondary btn-sm">Atur Role User</a>
             </div>
         </div>
     </div>
@@ -59,6 +59,10 @@
 
     {{-- form permissions --}}
     @include('roles_permissions.form-permissions')
+    {{-- /. form permissions --}}
+
+    {{-- form permissions --}}
+    @include('roles_permissions.form_asign_role')
     {{-- /. form permissions --}}
 
 @endsection
@@ -109,7 +113,8 @@
             mounted: function () {
                 this.datatable();
                 //Initialize Select2 Elements
-                $('.selectUser').select2({ theme: 'bootstrap4', })
+                $('.selectUser').select2({ theme: 'bootstrap4', dropdownParent: $('#formAsignRole') })
+                $('.selectRole').select2({ theme: 'bootstrap4', dropdownParent: $('#formAsignRole') })
             },
             methods: {
                 datatable() {
@@ -263,7 +268,45 @@
                             }
                         });
                 },
+                createAsignRole() {
+                    $("#formAsignRole").modal();
+                },
+                storeAsignRole(e) {
+                    const _this = this
+                    const url = '{!! url('roles-permissions/assign-role') !!}';
+                    axios
+                        .post(url, new FormData($(e.target)[0]))
+                        .then((response) => {
+                            $("#formAsignRole").modal("hide");
+                            _this.table.ajax.reload();
+                            Swal.fire({
+                                title : 'Mantap',
+                                icon : 'success',
+                                text : response.data
+                            });
 
+                        })
+                        .catch(function (error) {
+                            console.log(error)
+                            if (error.response) {
+                                var message_error = error.response.data.errors;
+                                var error_element = "";
+                                $.each(
+                                    message_error,
+                                    function (indexInArray, valueOfElement) {
+                                        error_element += `<div clas='text-danger'> ${valueOfElement}</div> <br>`;
+                                    }
+                                );
+
+                                Swal.fire({
+                                    title: "Gagal!",
+                                    icon: "error",
+                                    html: error_element,
+                                    confirmButtonText: "Ulangi",
+                                });
+                            }
+                        });
+                }
             },
         })
     </script>

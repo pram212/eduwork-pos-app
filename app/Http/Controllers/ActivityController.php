@@ -6,7 +6,7 @@ class ActivityController extends Controller
 {
     public function index()
     {
-        $this->authorize('lihat activity');
+        $this->authorize('lihat aktifitas user');
 
         return view('users.activities');
 

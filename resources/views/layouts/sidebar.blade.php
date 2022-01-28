@@ -16,16 +16,19 @@
           <a href="{{ route( 'users.edit', ['user' => Auth::user()->id ] ) }}" class="d-block">{{ Auth::user()->name }}</a>
         </div>
       </div>
-
       <!-- Sidebar Menu -->
       <nav class="mt-2">
         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-          <!-- Add icons to the links using the .nav-icon class
-               with font-awesome or any other icon font library -->
             <li class="nav-header">Home</li>
-            @can('lihat dashboard')
             <li class="nav-item">
                 <a href="{{ route('home') }}" class="nav-link @if( request()->is('home') ) active @endif">
+                    <i class="nav-icon fas fa-home"></i>
+                    <p>Beranda</p>
+                </a>
+            </li>
+            @can('lihat dashboard')
+            <li class="nav-item">
+                <a href="{{ route('dashboard') }}" class="nav-link @if( request()->is('dashboard') ) active @endif">
                     <i class="nav-icon fas fa-chart-pie"></i>
                     <p>Dashboard</p>
                 </a>
@@ -108,32 +111,32 @@
                 </a>
             </li>
             @endcan
-            {{-- @can('lihat activity') --}}
+            @can('lihat aktifitas user')
             <li class="nav-item">
                 <a href="{{ route('activities.index') }}" class="nav-link @if(request()->is('activities')) active @endif">
                   <i class="nav-icon fas fa-eye"></i>
                   <p>
-                    Log Aktivity
+                    Aktifitas User
                   </p>
                 </a>
             </li>
-            {{-- @endcan --}}
+            @endcan
+            @can('lihat role')
             <li class="nav-item">
                 <a href="{{ route('roles-permissions.index') }}" class="nav-link @if(request()->is('roles-permissions')) active @endif">
-                  <i class="nav-icon fas fa-eye"></i>
-                  <p>
-                    Role Permissions
-                  </p>
+                  <i class="nav-icon fas fa-key"></i>
+                  <p>Hak Akses</p>
                 </a>
             </li>
+            @endcan
             <li class="nav-header">Laporan</li>
             @can('lihat laporan penjualan')
             <li class="nav-item">
                 <a href="{{ route('reports.sales.index') }}" class="nav-link @if(request()->is('report/sales')) active @endif">
                     <i class="nav-icon fas fa-file-alt"></i>
-                  <p>
-                    Penjualan
-                  </p>
+                    <p>
+                        Penjualan
+                    </p>
                 </a>
             </li>
             @endcan

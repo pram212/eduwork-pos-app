@@ -20,15 +20,17 @@ class RolesAndPermissionsSeeder extends Seeder
         // Reset cached roles and permissions
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
-        $dahsboardPermission = ['name' => 'lihat dahsboard'];
+        $dahsboardPermission = ['name' => 'lihat dashboard'];
         $productPermissions = [ 'lihat produk', 'tambah produk', 'edit produk', 'hapus produk'];
         $categoryPermissions = [ 'lihat kategori', 'tambah kategori', 'edit kategori', 'hapus kategori'];
         $warehousePermissions = [ 'lihat gudang', 'tambah gudang', 'edit gudang', 'hapus gudang'];
         $supplierPermissions = [ 'lihat supplier', 'tambah supplier', 'edit supplier', 'hapus supplier'];
         $userPermissions = [ 'lihat user', 'tambah user', 'edit user', 'hapus user'];
-        $activityPermissions = ['lihat aktivity'];
+        $activityPermissions = ['lihat aktifitas user'];
         $salePermissons = ['lihat penjualan', 'tambah penjualan', 'edit penjualan', 'hapus penjualan'];
         $purchasePermissons = ['lihat pembelian', 'tambah pembelian', 'edit pembelian', 'hapus pembelian'];
+        $paymentPermission = ['lihat pembayaran', 'tambah pembayaran', 'edit pembayaran', 'hapus pembayaran'];
+        $rolePermission = ['lihat role', 'tambah role', 'edit role', 'hapus role', 'assign user', 'atur izin'];
         $reportPermissions = ['lihat laporan penjualan', 'lihat laporan pembelian'];
 
         // create permissions
@@ -60,6 +62,12 @@ class RolesAndPermissionsSeeder extends Seeder
             Permission::create(['name' => $value]);
         }
         foreach ($reportPermissions as $key => $value) {
+            Permission::create(['name' => $value]);
+        }
+        foreach ($paymentPermission as $key => $value) {
+            Permission::create(['name' => $value]);
+        }
+        foreach ($rolePermission as $key => $value) {
             Permission::create(['name' => $value]);
         }
 
@@ -98,8 +106,8 @@ class RolesAndPermissionsSeeder extends Seeder
             ]);
         }
 
-        $superRole = Role::create(['name' => 'super admin']);
-        $superRole->givePermissionTo(Permission::all());
+        $superAdminRole = Role::create(['name' => 'super admin']);
+        $superAdminRole->givePermissionTo(Permission::all());
 
         $cashier = Role::create(['name' => 'kasir']);
         $cashier->givePermissionTo($salePermissons);
@@ -113,8 +121,8 @@ class RolesAndPermissionsSeeder extends Seeder
         $admin->givePermissionTo($purchasePermissons);
         $admin->givePermissionTo($reportPermissions);
 
-        $superUser = User::where('name', 'pramono')->first();
-        $superUser->assignRole('super admin');
+        $superAdminUser = User::where('name', 'pramono')->first();
+        $superAdminUser->assignRole('super admin');
 
         $cashierUser = User::where('name', 'iwan')->first();
         $cashierUser->assignRole('kasir');

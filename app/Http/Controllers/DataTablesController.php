@@ -236,7 +236,7 @@ class DataTablesController extends Controller
             ->addColumn('users', function($roles) {
                 $users = "";
                 foreach ($roles->users as $user) {
-                    $users .= $user->name . " ";
+                    $users .= $user->name . ", ";
                 }
                 return $users;
             })

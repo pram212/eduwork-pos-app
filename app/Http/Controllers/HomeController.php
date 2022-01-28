@@ -20,6 +20,10 @@ class HomeController extends Controller
         $this->middleware('auth');
     }
 
+    public function startPage()
+    {
+        return view('start');
+    }
     /**
      * Show the application dashboard.
      *
@@ -27,7 +31,7 @@ class HomeController extends Controller
      */
     public function index()
     {
-        // $this->authorize('lihat dashboard');
+        $this->authorize('lihat dashboard');
 
         Activity::create([
             'user_id' =>  Auth::id(),
@@ -63,7 +67,7 @@ class HomeController extends Controller
 
     public function barChart()
     {
-        $barChartlabel = ['penjualan', 'pembelian'];
+        $barChartlabel = ['pemasukan', 'pengeluaran'];
         $dataBars = [];
         foreach ($barChartlabel as $key => $value) {
             $dataBars[$key]['label'] = $barChartlabel[$key];
@@ -111,7 +115,7 @@ class HomeController extends Controller
 
         foreach ($produk as $key => $value) {
             array_push($doughnutChartLabel, $value->name);
-            array_push($doughnutChartData, $value->sales->sum('pivot.quantity') );
+            array_push($doughnutChartData, $value->purchases->sum('pivot.quantity') );
         }
 
         $dataDoughnut['label'] = $doughnutChartLabel;

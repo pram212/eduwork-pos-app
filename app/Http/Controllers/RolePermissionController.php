@@ -16,12 +16,12 @@ class RolePermissionController extends Controller
      */
     public function index()
     {
-        // $role = Role::find(1);
-        // return $role->users;
+        $this->authorize('lihat role');
 
         $permissions = Permission::all();
-        $users = User::all();
-        return view('roles_permissions.index', compact('permissions', 'users'));
+        $users = User::doesntHave('roles')->get();
+        $roles = Role::all()->pluck('name');
+        return view('roles_permissions.index', compact('permissions', 'users', 'roles'));
     }
 
     /**
@@ -42,6 +42,8 @@ class RolePermissionController extends Controller
      */
     public function store(Request $request)
     {
+        $this->authorize('tambah role');
+
         $request->validate([
             'name' => 'required'
         ]);
@@ -54,28 +56,6 @@ class RolePermissionController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-
-    }
-
-    /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -84,6 +64,7 @@ class RolePermissionController extends Controller
      */
     public function update(Request $request, $id)
     {
+        $this->authorize('edit role');
         $request->validate([
             'name' => 'required'
         ]);
@@ -103,6 +84,7 @@ class RolePermissionController extends Controller
      */
     public function destroy($id)
     {
+        $this->authorize('hapus role');
         $role = Role::find($id);
         $role->delete();
         return response()->json($role);
@@ -110,6 +92,7 @@ class RolePermissionController extends Controller
 
     public function getPermission($id)
     {
+        $this->authorize('atur izin');
         $role = Role::find($id);
         $permission = $role->permissions->pluck('name');
         return $permission;
@@ -117,9 +100,29 @@ class RolePermissionController extends Controller
 
     public function updatePermission(Request $request, $id)
     {
+        $this->authorize('atur izin');
         $role = Role::find($id);
         $role->syncPermissions($request->permissions);
         return response("Permission Berhasil Diubah");
+    }
+
+    public function asignRoleUser(Request $request)
+    {
+        $this->authorize('assign user');
+
+        $request->validate([
+            'role' => 'required',
+            'users' => 'required'
+        ]);
+
+        foreach ($request->users as $user_id) {
+
+            $user = User::find($user_id);
+
+            $user->assignRole($request->role);
+        }
+
+        return response("User telah memiliki role");
     }
 
 }

@@ -22,7 +22,8 @@ Auth::routes([
     'regiter' => false
 ]);
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'startPage'])->name('home');
+Route::get('/dashboard', [App\Http\Controllers\HomeController::class, 'index'])->name('dashboard');
 
 Route::middleware('auth')->group(function(){
     // resource routes
@@ -56,6 +57,7 @@ Route::middleware('auth')->group(function(){
     Route::get('get/permission/{id}', [\App\Http\Controllers\RolePermissionController::class, 'getPermission']);
     Route::get('get/user/{id}', [\App\Http\Controllers\RolePermissionController::class, 'getUserRole']);
     Route::post('roles-permissions/setup-permissions/{id}', [\App\Http\Controllers\RolePermissionController::class, 'updatePermission']);
+    Route::post('roles-permissions/assign-role', [\App\Http\Controllers\RolePermissionController::class, 'asignRoleUser']);
 
     // report route
     Route::get('report/sales', [\App\Http\Controllers\ReportController::class, 'salesReport'])->name('reports.sales.index');
