@@ -22,7 +22,6 @@
                                 @endforeach
                               </select>
                             </div>
-                            {{-- <p class="card-title">Produk</p> --}}
                         </div>
                         <div class="card-body">
                            <table class="table table-sm">

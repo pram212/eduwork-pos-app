@@ -17,9 +17,10 @@ class SaleController extends Controller
     {
         $this->authorize('lihat penjualan');
 
-        $products = Product::where('stock', '!=', 0)->get();
+        $products = Product::where('stock', '>', 0)->get();
 
-        return view('transactions.sales.sales', compact('products'));
+        // testing mode
+        return view('transactions.sales.sales-test', compact('products'));
     }
 
     /**
@@ -63,14 +64,13 @@ class SaleController extends Controller
         $sale->payment = $request->pembayaran;
         $sale->code = "SO" . date('ymdhis');
         $sale->save();
+        $sale->refresh();
+
         $sale->products()->sync($products);
 
-        foreach ($request->produk as $key => $value) {
-            $products = Product::find($value);
-            $products->stock -= $request->quantity[$key];
-            $products->save();
-        }
-        return view('transactions.sales.nota-kontan', compact('sale'))->with('success', 'Penjualan Berhasil disimpan');
+        $this->updateStock($sale->products, true);
+
+        return response()->json( $sale->load('products') );
     }
 
     /**
@@ -92,7 +92,8 @@ class SaleController extends Controller
      */
     public function edit(Sale $sale)
     {
-        //
+        // handle ajax untuk mengambil satu data penjualan untuk edit
+        return response()->json( $sale->load('products') );
     }
 
     /**
@@ -113,20 +114,43 @@ class SaleController extends Controller
             'quantity' => ['required']
         ]);
 
+        // kembalikan stok produk ke semula
+        $this->updateStock($sale->products, false);
 
+        // isi tabel sales
+        $sale->total_price = $request->total;
+        $sale->payment = $request->pembayaran;
+        $sale->save();
+        $sale->refresh();
+
+        // maping request produk sesuai dengan tempate method sync cth: $user->roles()->sync([1 => ['expires' => true], 2, 3]);
         $products = [];
         foreach ($request->produk as $key => $value) {
             $products[$value] = ["quantity" => $request->quantity[$key] ];
         }
 
-        $sale->total_price = $request->total;
-        $sale->payment = $request->pembayaran;
-        $sale->code = "SO" . date('ymdhis');
-        $sale->save();
+        //  isi tabel pivot dengan method sync
         $sale->products()->sync($products);
-        $sale->refresh();
 
-        return response("Penjualan Berhasil Diubah");
+        // kurangi stok sesuai quantity dari sale yang beru saya disimpan
+        $this->updateStock($sale->products, true);
+
+        return response()->json( $sale->load('products') );
+    }
+
+    public function updateStock($products, $status)
+    {
+        foreach ($products as $p) {
+            $product = Product::find($p->id);
+            if ($status) {
+                $product->stock -= $p->pivot->quantity;
+                $product->save();
+            } else {
+                $product->stock += $p->pivot->quantity;
+                $product->save();
+            }
+
+        }
     }
 
     /**

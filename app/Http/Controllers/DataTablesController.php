@@ -36,23 +36,9 @@ class DataTablesController extends Controller
         return $dataTable;
     }
 
-    public function getSales(Request $request)
+    public function getSales()
     {
-        if ($request->start) {
-
-            $start = date("Y-m-d", strtotime($request->start));
-
-            $end = date("Y-m-d", strtotime($request->end));
-
-            $sales = Sale::where('created_at', '>=', $start )
-                    ->where('created_at', '<=', $end )
-                    ->with('products')
-                    ->select('sales.*');
-        } else {
-
-            $sales = Sale::with('products')->select('sales.*');
-
-        }
+        $sales = Sale::with('products')->orderBy('id', 'desc')->get();
 
         $dataTable =
                 DataTables::of($sales)
@@ -61,7 +47,7 @@ class DataTablesController extends Controller
                 })
                 ->addColumn('action', function($sales) {
                     $editBtn = '<a href="#" onclick="app.edit(event, '. $sales->id .')" class="btn btn-xs btn-info" id="editSale">Edit</a>';
-                    $delBtn = '<a href="#" onclick="app.delete(event, '. $sales->id .')" class="btn btn-xs btn-danger mx-2" id="hapusSale">Hapus</a>';
+                    $delBtn = '<a href="#" onclick="app.delete('. $sales->id .')" class="btn btn-xs btn-danger mx-2" id="hapusSale">Hapus</a>';
                     $action = $editBtn .= $delBtn;
                     return $action;
                 })
