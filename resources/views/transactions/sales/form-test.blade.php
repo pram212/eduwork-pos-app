@@ -8,28 +8,22 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form :action="action" method="POST" @submit.prevent="save($event, data.id)">
+                <form :action="action" method="POST" @submit.prevent="save($event, data.id)" id="myForm">
                 @csrf
                 <input type="hidden" name="_method" value="PUT" v-if="method">
                 <div class="row">
-                    <div class="col-7">
+                    <div class="col-8">
                         <div class="card">
                             <div class="card-header">
                                 <div class="mb-3">
-                                  <label for="" class="form-label text-info">Pilih Produk</label>
-                                  <select class="form-control select2" onchange="app.tambahOrder(event)">
-                                    <option value=""></option>
-                                    @foreach ($products as $p)
-                                    <option value="{{$p->id}}">{{ $p->code }} - {{ $p->name }}</option>
-                                    @endforeach
+                                  <label for="" class="form-label text-info">Keranjang Belanja</label>
+                                  <select class="form-control select2" onchange="app.tambahOrder(event)" onclick="app.getproducts()">
+                                    <option v-for="(product, index) in products" :value="index">@{{ product.code }} - @{{product.name}} ( @{{ product.stock }} )</option>
                                   </select>
                                 </div>
                             </div>
                             <div class="card-body">
                                <table class="table table-sm">
-                                   <thead>
-                                       <th colspan="7" class="text-center text-info">Keranjang Belanja</th>
-                                   </thead>
                                    <thead class="text-center">
                                        <th width="15%">Kode</th>
                                        <th width="30%">Nama</th>
@@ -49,7 +43,7 @@
                                                 <input type="text" class="form-control form-control-sm" id="name" :value="order.name" readonly>
                                             </td>
                                             <td>
-                                                <input type="text" class="form-control form-control-sm" id="harga" :value="order.price" readonly>
+                                                <input type="text" class="form-control form-control-sm" id="harga" :value="mataUang(order.price)" readonly>
                                             </td>
                                             <td>
                                                 <input type="text" class="form-control form-control-sm" id="stock" :value="order.stock" readonly>
@@ -58,7 +52,7 @@
                                                 <input type="number" :max="order.stock" v-model="order.quantity" name="quantity[]" class="form-control form-control-sm" id="quantity" @keyup="hitungTotal($event, index)">
                                             </td>
                                             <td>
-                                                <input type="text" class="form-control form-control-sm" id="subtotal" :value="order.total" readonly>
+                                                <input type="text" class="form-control form-control-sm" id="subtotal" :value="mataUang(order.total)" readonly>
                                             </td>
                                             <td>
                                                 <button type="button" class="btn btn-sm btn-outline-danger" @click="hapusOrder(index, order)"><i class="fas fa-trash"></i></button>
@@ -69,7 +63,7 @@
                                        <tr>
                                            <th colspan="4" class="text-right">Subtotal</th>
                                            <td colspan="2">
-                                               <input type="number" class="form-control form-control-sm" :value="grandTotal" readonly>
+                                               <input type="text" class="form-control form-control-sm" :value="mataUang(grandTotal)" readonly>
                                            </td>
                                        </tr>
                                    </tfoot>
@@ -77,7 +71,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-5">
+                    <div class="col-4">
                         <div class="card">
                             <div class="card-header">
                                 <p class="card-title text-info"><b>Tagihan</b></p>
@@ -100,19 +94,19 @@
                                         <label for="grandtotal">Grand Total</label>
                                    </div>
                                    <div class="col-6 mb-2">
-                                        <input type="number" class="form-control form-control-sm" name="total" :value="grandTotal" readonly>
+                                        <input type="text" class="form-control form-control-sm" name="total" :value="mataUang(grandTotal)" readonly>
                                    </div>
                                    <div class="col-6 mb-2">
                                         <label for="pembayaran">Pembayaran</label>
                                    </div>
                                    <div class="col-6 mb-2">
-                                        <input type="number" class="form-control form-control-sm" name="pembayaran" v-model="pembayaran" id="pembayaran">
+                                        <input type="text" class="form-control form-control-sm" name="pembayaran" v-model="pembayaran" id="pembayaran">
                                    </div>
                                    <div class="col-6 mb-2">
                                         <label for="kembalian">Kembalian</label>
                                    </div>
                                    <div class="col-6 mb-2">
-                                        <input type="number" class="form-control form-control-sm" name="kembalian" :value="(pembayaran-grandTotal)" readonly>
+                                        <input type="text" class="form-control form-control-sm" name="kembalian" :value="mataUang(pembayaran-grandTotal)" readonly>
                                    </div>
                                </div>
                             </div>

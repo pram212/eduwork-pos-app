@@ -41,6 +41,14 @@ class SupplierController extends Controller
 
     }
 
+    public function edit(Supplier $supplier)
+    {
+        $this->authorize('edit supplier');
+
+        return response()->json( $supplier );
+
+    }
+
     public function update(Request $request, Supplier $supplier)
     {
         $this->authorize('edit supplier');

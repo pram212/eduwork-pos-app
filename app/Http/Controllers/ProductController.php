@@ -53,6 +53,19 @@ class ProductController extends Controller
         return response()->json($product);
 
     }
+     /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  \App\Models\Sale  $sale
+     * @return \Illuminate\Http\Response
+     */
+    public function edit(Product $product)
+    {
+        $this->authorize('edit produk');
+
+        return response()->json( $product );
+
+    }
 
     /**
      * Update the specified resource in storage.

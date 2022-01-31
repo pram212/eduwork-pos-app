@@ -50,6 +50,7 @@ Route::middleware('auth')->group(function(){
     Route::get('datatable/roles-permissions', [\App\Http\Controllers\DataTablesController::class, 'getRoles']);
 
     // additional routes
+    Route::get('getproducts', [\App\Http\Controllers\SaleController::class, 'getProducts']);
     Route::get('get/sale/{id}', [\App\Http\Controllers\SaleController::class, 'getSale']);
     Route::get('get/purchase/{id}', [\App\Http\Controllers\PurchaseController::class, 'getPurchase']);
     Route::put('password/reset/manual', [\App\Http\Controllers\UserController::class, 'resetPassword']);

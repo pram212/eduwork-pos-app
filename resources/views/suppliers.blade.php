@@ -7,7 +7,7 @@
 @section('content')
     <div class="row mb-2">
         <div class="col-sm-2">
-            <a href="#" v-on:click="store()" class="btn btn-primary">Tambah Penyuplai</a>
+            <a href="#" @click.prevent="create()" class="btn btn-primary">Tambah Penyuplai</a>
         </div>
     </div>
     <hr>
@@ -121,18 +121,22 @@
                             _this.datas = _this.table.ajax.json().data;
                         });
                 },
-                store() {
+                create() {
                     this.data = {};
                     this.method = false;
                     $("#exampleModal").modal();
                     $(".modal-title").text("Tambah Penyuplai");
                 },
-                update(event, id) {
-                    this.data = this.datas[id - 1];
-                    console.log(this.data)
-                    this.method = true;
-                    $(".modal-title").text("Edit Penyuplai");
+                edit(event, id) {
+                    const _this = this
+                    var url = action + '/' + id + '/edit';
+                    _this.method = true;
+                    $(".modal-title").text("Edit Gudang");
                     $("#exampleModal").modal();
+                    axios.get(url)
+                        .then(function (response) {
+                            _this.data = response.data;
+                        })
                 },
                 destroy(event, id) {
                     Swal.fire({

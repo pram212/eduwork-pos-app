@@ -48,6 +48,19 @@ class CategoryController extends Controller
         return response()->json($category);
 
     }
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  \App\Models\Sale  $sale
+     * @return \Illuminate\Http\Response
+     */
+    public function edit(Category $category)
+    {
+        $this->authorize('edit kategori');
+
+        return response()->json( $category );
+
+    }
 
     /**
      * Update the specified resource in storage.

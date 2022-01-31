@@ -74,8 +74,6 @@
         var action = '{{url('sales')}}';
         // url datatable
         var api = '{{url('datatable/sales')}}';
-        // variable untuk mengisi kerangjang belanja
-        var products = {{ Js::from($products) }}
         // template kolom datatable
         var columns = [
             { data: "DT_RowIndex", name: "DT_RowIndex", orderable: true},
@@ -99,12 +97,13 @@
                 pembayaran: 0,
                 method: false,
                 btnPrint: false,
+                products : {}
             },
             mounted: function () {
                 // datatable ajax
                 this.datatable();
                 // select2
-                $('.select2').select2({ theme: 'bootstrap4', dropdownParent: $('#formModal') })
+                $('.select2').select2({ theme: 'bootstrap4', dropdownParent: $('#formModal'), placeholder: 'Pilih Produk'})
                 //Date range picker
                 $('#reservation').daterangepicker({ dateFormat: 'DD-MM-YYYY' })
             },
@@ -124,6 +123,7 @@
                         });
                 },
                 create() {
+                    this.getproducts()
                     this.data = {};
                     this.orders = [];
                     this.method = false;
@@ -131,6 +131,7 @@
                     $(".modal-title").text("Penjualan Baru");
                 },
                 edit(e, id) {
+                    this.getproducts()
                     const _this = this
                     _this.orders = [];
                     _this.method = true;
@@ -139,7 +140,7 @@
                         .then(function (response) {
                             // handle success
                             _this.data = response.data
-                            console.log(_this.data);
+                            // console.log(_this.data);
                             const oldOrders = _this.data.products;
                             // lakukan pengulangan terhadap products
                             for (let i = 0; i < oldOrders.length; i++) {
@@ -196,7 +197,6 @@
                     axios
                         .post(url, new FormData($(event.target)[0]))
                         .then((response) => {
-                            console.log(response.data)
                             _this.table.ajax.reload();
                             Swal.fire({
                                 title: 'Mantap',
@@ -205,7 +205,8 @@
                             });
                             _this.action = action;
                             _this.data = response.data
-                            console.log(this.data)
+                            _this.getproducts()
+                            $('.select2').val(null).trigger('change');
                         })
                         .catch(function (error) {
                             console.log(error)
@@ -252,10 +253,9 @@
                         });
                     }
                 },
-                // method untuk mengisi keranjang belanja
                 tambahOrder(e) {
-                    var index = e.target.value - 2;
-                    var product = products[index]
+                    var index = e.target.value;
+                    var product = this.products[index]
                     this.orders.push({
                         product_id : product.id,
                         code: product.code,
@@ -266,6 +266,15 @@
                         total: product.price * 1
                     });
                     this.hitungGrandTotal();
+                },
+                getproducts() {
+                    const _this = this
+                    url = '{!! url('getproducts') !!}';
+                    axios
+                        .get(url)
+                        .then(function(response) {
+                            _this.products = response.data;
+                        })
                 },
                 hapusOrder(index, order) {
                     var idx = this.orders.indexOf(order);
@@ -295,7 +304,10 @@
                     this.orders[index].total = result;
                     this.hitungGrandTotal();
                 },
-
+                mataUang(number) {
+                    var rupiah = (number).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
+                    return rupiah;
+                }
             },
         })
     </script>

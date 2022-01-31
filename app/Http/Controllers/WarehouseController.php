@@ -46,6 +46,19 @@ class WarehouseController extends Controller
         return response()->json($warehouse);
     }
 
+     /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  \App\Models\Sale  $sale
+     * @return \Illuminate\Http\Response
+     */
+    public function edit(Warehouse $warehouse)
+    {
+        // handle ajax untuk mengambil satsu data penjualan untuk edit
+        return response()->json( $warehouse );
+
+    }
+
     /**
      * Update the specified resource in storage.
      *

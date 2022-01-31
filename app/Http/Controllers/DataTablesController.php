@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Auth;
 use Spatie\Permission\Models\Role;
 use Yajra\DataTables\DataTables;
-use Illuminate\Http\Request;
 use App\Models\Warehouse;
 use App\Models\Category;
 use App\Models\Supplier;
@@ -14,7 +14,6 @@ use App\Models\Product;
 use App\Models\Payment;
 use App\Models\User;
 use App\Models\Sale;
-use Illuminate\Support\Facades\Auth;
 
 class DataTablesController extends Controller
 {
@@ -124,7 +123,7 @@ class DataTablesController extends Controller
                 ->addColumn('action', function($products) {
                     $user = Auth::user();
                     $btnUpdate = ($user->can('edit produk'))
-                        ? '<a href="#" onclick="app.update(event, '. $products->id.')" class="btn btn-primary btn-xs mx-1">Edit</a>'
+                        ? '<a href="#" onclick="app.edit(event, '. $products->id.')" class="btn btn-primary btn-xs mx-1">Edit</a>'
                         : '<a href="#" class="btn btn-primary btn-xs mx-1">can\'t edit</a>';
                     $btnDelete = ($user->can('hapus produk'))
                         ? '<a href="#" onclick="app.destroy(event, '. $products->id .')" class="btn btn-danger btn-xs mx-1">Hapus</a>'
@@ -149,7 +148,7 @@ class DataTablesController extends Controller
                 ->addColumn('action', function($categories) {
                     $user = Auth::user();
                     $btnUpdate = ($user->can('edit kategori'))
-                        ? '<a href="#" onclick="app.update(event, '. $categories->id.')" class="btn btn-primary btn-xs mx-1">Edit</a>'
+                        ? '<a href="#" onclick="app.edit(event, '. $categories->id.')" class="btn btn-primary btn-xs mx-1">Edit</a>'
                         : '<a href="#" class="btn btn-primary btn-xs mx-1">can\'t edit</a>';
                     $btnDelete = ($user->can('hapus kategori'))
                         ? '<a href="#" onclick="app.destroy(event, '. $categories->id .')" class="btn btn-danger btn-xs mx-1">Hapus</a>'
@@ -173,7 +172,7 @@ class DataTablesController extends Controller
                 ->addColumn('action', function($warehouses) {
                     $user = Auth::user();
                     $btnUpdate = ($user->can('edit gudang'))
-                        ? '<a href="#" onclick="app.update(event, '. $warehouses->id.')" class="btn btn-primary btn-xs mx-1">Edit</a>'
+                        ? '<a href="#" onclick="app.edit(event, '. $warehouses->id.')" class="btn btn-primary btn-xs mx-1">Edit</a>'
                         : '<a href="#" class="btn btn-primary btn-xs mx-1">can\'t edit</a>';
                     $btnDelete = ($user->can('hapus gudang'))
                         ? '<a href="#" onclick="app.destroy(event, '. $warehouses->id .')" class="btn btn-danger btn-xs mx-1">Hapus</a>'
@@ -196,7 +195,7 @@ class DataTablesController extends Controller
                 ->addColumn('action', function($suppliers) {
                     $user = Auth::user();
                     $btnUpdate = ($user->can('edit supplier'))
-                        ? '<a href="#" onclick="app.update(event, '. $suppliers->id.')" class="btn btn-primary btn-xs mx-1">Edit</a>'
+                        ? '<a href="#" onclick="app.edit(event, '. $suppliers->id.')" class="btn btn-primary btn-xs mx-1">Edit</a>'
                         : '<a href="#" class="btn btn-primary btn-xs mx-1">can\'t edit</a>';
                     $btnDelete = ($user->can('hapus supplier'))
                         ? '<a href="#" onclick="app.destroy(event, '. $suppliers->id .')" class="btn btn-danger btn-xs mx-1">Hapus</a>'

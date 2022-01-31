@@ -10,7 +10,7 @@
             @can('tambah produk')
             <div class="btn-group">
                 <button class="btn btn-sm btn-primary"><i class="fas fa-plus"></i></button>
-                <a href="#" @click.prevent="store()" class="btn btn-sm btn-primary">Produk Baru</a>
+                <a href="#" @click.prevent="create()" class="btn btn-sm btn-primary">Produk Baru</a>
             </div>
             @endcan
         </div>
@@ -172,18 +172,22 @@
                             _this.datas = _this.table.ajax.json().data;
                         });
                 },
-                store() {
+                create() {
                     this.data = {};
                     this.method = false;
                     $("#exampleModal").modal();
                     $(".modal-title").text("Tambah Produk");
                 },
-                update(event, id) {
-                    this.data = this.datas[id - 1];
-                    console.log(this.data)
-                    this.method = true;
+                edit(event, id) {
+                    const _this = this
+                    var url = action + '/' + id + '/edit';
+                    _this.method = true;
                     $(".modal-title").text("Edit Produk");
                     $("#exampleModal").modal();
+                    axios.get(url)
+                        .then(function (response) {
+                            _this.data = response.data;
+                        })
                 },
                 destroy(event, id) {
                     Swal.fire({

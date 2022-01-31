@@ -60,15 +60,19 @@ class SaleController extends Controller
         }
 
         $sale = new Sale();
-        $sale->total_price = $request->total;
+        $sale->total_price = $this->unFormatCurrency($request->total);
         $sale->payment = $request->pembayaran;
         $sale->code = "SO" . date('ymdhis');
         $sale->save();
-        $sale->refresh();
 
         $sale->products()->sync($products);
 
-        $this->updateStock($sale->products, true);
+        // kurangi stok sesuai quantity dari sale yang beru saya disimpan
+        foreach ($sale->products as $p) {
+            $product = Product::find($p->id);
+            $product->stock -= $p->pivot->quantity;
+            $product->save();
+        }
 
         return response()->json( $sale->load('products') );
     }
@@ -114,14 +118,19 @@ class SaleController extends Controller
             'quantity' => ['required']
         ]);
 
+        // return $sale->load('products');
+
         // kembalikan stok produk ke semula
-        $this->updateStock($sale->products, false);
+        foreach ($sale->products as $p) {
+                $product = Product::find($p->id);
+                $product->stock += $p->pivot->quantity;
+                $product->save();
+        }
 
         // isi tabel sales
-        $sale->total_price = $request->total;
+        $sale->total_price = $this->unFormatCurrency($request->total);
         $sale->payment = $request->pembayaran;
         $sale->save();
-        $sale->refresh();
 
         // maping request produk sesuai dengan tempate method sync cth: $user->roles()->sync([1 => ['expires' => true], 2, 3]);
         $products = [];
@@ -133,24 +142,13 @@ class SaleController extends Controller
         $sale->products()->sync($products);
 
         // kurangi stok sesuai quantity dari sale yang beru saya disimpan
-        $this->updateStock($sale->products, true);
+        foreach ($request->produk as $key => $value) {
+            $product = Product::find($value);
+            $product->stock -= $request->quantity[$key];
+            $product->save();
+        }
 
         return response()->json( $sale->load('products') );
-    }
-
-    public function updateStock($products, $status)
-    {
-        foreach ($products as $p) {
-            $product = Product::find($p->id);
-            if ($status) {
-                $product->stock -= $p->pivot->quantity;
-                $product->save();
-            } else {
-                $product->stock += $p->pivot->quantity;
-                $product->save();
-            }
-
-        }
     }
 
     /**
@@ -178,4 +176,16 @@ class SaleController extends Controller
 
         return response()->json($sale);
     }
+
+    public function getProducts()
+    {
+        $products = Product::where('stock', '>', 0)->get();
+        return $products;
+    }
+
+    public function unFormatCurrency($num)
+    {
+        return intval(preg_replace('/[^\d\.]/', '', $num));
+    }
+
 }
