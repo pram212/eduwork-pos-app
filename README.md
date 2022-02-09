@@ -30,7 +30,7 @@ Sebelum menginstal aplikasi pastikan bahwa di  komputer kamu sudah terinstal:
 
 # Instalasi
 - download aplikasi. 
-Boleh menggunakan git dengan "git clone " atau download zip.
+Boleh menggunakan git dengan "git clone https://github.com/pram212/eduwork-pos-app.git" atau download zip.
 - nyalakan web server
 - jika kamu menggunakan xampp, buka phpmyadmin dan buat database baru
 - buka aplikasi di code editor
