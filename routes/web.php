@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Sale;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 /*
