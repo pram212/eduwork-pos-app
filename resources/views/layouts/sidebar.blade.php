@@ -111,7 +111,7 @@
             </li>
             @endcan
             @can('lihat aktifitas user')
-            <li class="nav-item">
+            <li class="nav-item"> 
                 <a href="{{ route('activities.index') }}" class="nav-link @if(request()->is('activities')) active @endif">
                   <i class="nav-icon fas fa-eye"></i>
                   <p>
