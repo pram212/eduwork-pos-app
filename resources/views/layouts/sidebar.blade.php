@@ -1,7 +1,8 @@
 <aside class="main-sidebar sidebar-dark-primary">
     <!-- Brand Logo -->
     <a href="index3.html" class="brand-link">
-      <span class="brand-text font-weight-light">{{config('app.name')}}</span>
+        <img src="{{asset('img/prams_brand.png')}}" alt="AdminLTE Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
+        <span class="brand-text font-weight-light">{{config('app.name')}}</span>
     </a>
 
     <!-- Sidebar -->
@@ -9,7 +10,7 @@
       <!-- Sidebar user panel (optional) -->
       <div class="user-panel mt-3 pb-3 mb-3 d-flex">
         <div class="info">
-          <a href="{{ route( 'users.edit', ['user' => Auth::user()->id ] ) }}" class="d-block">{{ Auth::user()->name }}</a>
+          <a href="{{ route( 'users.edit', ['user' => Auth::user()->id ] ) }}" class="d-block">Login as {{ ucwords(Auth::user()->name) }}</a>
         </div>
       </div>
       <!-- Sidebar Menu -->
